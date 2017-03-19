@@ -137,7 +137,7 @@ namespace octomap {
    
     
     void averageNodeColor(SemanticOcTreeNode* n, uint8_t r, uint8_t g, uint8_t b);
-    void averageNodeSemantics(SemanticOcTreeNode* n, SemanticOcTreeNode::Semantics s);
+    void averageNodeSemantics(SemanticOcTreeNode* n, std::vector<float> label);
 
     // update inner nodes, sets color to average child color
     void updateInnerOccupancy();

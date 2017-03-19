@@ -32,6 +32,9 @@ TARGET_LINK_LIBRARIES(test_semantic_tree octomap octomath)
 ADD_EXECUTABLE(test_semantic_scans test_semantic_scans.cpp)
 TARGET_LINK_LIBRARIES(test_semantic_scans octomap octomath)
 
+ADD_EXECUTABLE(test_semantic_multiscans test_semantic_multiscans.cpp)
+TARGET_LINK_LIBRARIES(test_semantic_multiscans octomap octomath)
+
 
 # CTest tests below
 
@@ -54,3 +57,4 @@ ADD_TEST (NAME test_mapcollection COMMAND test_mapcollection ${PROJECT_SOURCE_DI
 ADD_TEST (NAME test_color_tree    COMMAND test_color_tree)
 ADD_TEST (NAME test_semantic_tree COMMAND test_semantic_tree)
 ADD_TEST (NAME test_semantic_scans COMMAND test_semantic_scans)
+ADD_TEST (NAME test_semantic_multiscans COMMAND test_semantic_multiscans)

@@ -148,21 +148,21 @@ namespace octomap {
   }
 
   void SemanticOcTree::averageNodeSemantics(SemanticOcTreeNode* n,
-                                            SemanticOcTreeNode::Semantics s) {
+                                            std::vector<float> label) {
     if (n != 0) {
       if (n->isSemanticsSet()) {
         SemanticOcTreeNode::Semantics prev_semantics = n->getSemantics();
-        if (prev_semantics.label.size() < s.label.size())
-            prev_semantics.label.resize(s.label.size());
+        if (prev_semantics.label.size() < label.size())
+            prev_semantics.label.resize(label.size());
        
-        for (int i=0; i<(int)s.label.size(); i++) {
-          prev_semantics.label[i] += s.label[i];
+        for (int i=0; i<(int)label.size(); i++) {
+          prev_semantics.label[i] += label[i];
           prev_semantics.label[i] /= 2;
         }
         n->setSemantics(prev_semantics);
       }
       else {
-        n->setSemantics(s);
+        n->setSemantics(label);
       }
     }
   }
