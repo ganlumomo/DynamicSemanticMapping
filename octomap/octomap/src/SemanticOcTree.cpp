@@ -96,7 +96,7 @@ namespace octomap {
           else if (mlabel.size() < clabel.size())
             mlabel.resize(clabel.size());
 
-          for(unsigned int l=0; l<clabel.size(); l++) {
+          for(int l=0; l<(int)clabel.size(); l++) {
             mlabel[l] += clabel[l];
           }
           ++c;
@@ -105,12 +105,12 @@ namespace octomap {
     }
     
     if (c > 0) {
-      for (unsigned int l=0; l<mlabel.size(); l++) {
+      for (int l=0; l<(int)mlabel.size(); l++) {
         mlabel[l] /= c;
       }
       return Semantics(mlabel);
     }
-    else { // no child had a color other than white
+    else { // no child had a semantics other than empty
       return Semantics();
     }
   }
@@ -131,7 +131,43 @@ namespace octomap {
     semanticOcTreeMemberInit.ensureLinking();
   };
 
-  
+ 
+  void SemanticOcTree::averageNodeColor(SemanticOcTreeNode* n,
+                                        uint8_t r,
+                                        uint8_t g,
+                                        uint8_t b) {
+    if (n != 0) {
+      if (n->isColorSet()) {
+        SemanticOcTreeNode::Color prev_color = n->getColor();
+        n->setColor((prev_color.r + r)/2, (prev_color.g + g)/2, (prev_color.b + b)/2);
+      }
+      else {
+        n->setColor(r, g, b);
+      }
+    }
+  }
+
+  void SemanticOcTree::averageNodeSemantics(SemanticOcTreeNode* n,
+                                            SemanticOcTreeNode::Semantics s) {
+    if (n != 0) {
+      if (n->isSemanticsSet()) {
+        SemanticOcTreeNode::Semantics prev_semantics = n->getSemantics();
+        if (prev_semantics.label.size() < s.label.size())
+            prev_semantics.label.resize(s.label.size());
+       
+        for (int i=0; i<(int)s.label.size(); i++) {
+          prev_semantics.label[i] += s.label[i];
+          prev_semantics.label[i] /= 2;
+        }
+        n->setSemantics(prev_semantics);
+      }
+      else {
+        n->setSemantics(s);
+      }
+    }
+  }
+
+
   void SemanticOcTree::updateInnerOccupancy() {
     this->updateInnerOccupancyRecurs(this->root, 0);
   }

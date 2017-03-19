@@ -90,7 +90,10 @@ namespace octomap {
     Color& getColor() { return color; }
     
     inline Semantics getSemantics() const { return semantics; }
-    inline void setSemantics(std::vector<float> s) {this->semantics = s; }
+    inline void setSemantics(Semantics s) {this->semantics = s; }
+    inline void setSemantics(std::vector<float> label) {
+      this->semantics.label = label;
+    }
     Semantics& getSemantics() {return semantics; }
 
     // has any color been integrated? (pure white is very unlikely...)
@@ -131,7 +134,11 @@ namespace octomap {
     SemanticOcTree* create() const {return new SemanticOcTree(resolution); }
 
     std::string getTreeType() const {return "ColorOcTree";}
+   
     
+    void averageNodeColor(SemanticOcTreeNode* n, uint8_t r, uint8_t g, uint8_t b);
+    void averageNodeSemantics(SemanticOcTreeNode* n, SemanticOcTreeNode::Semantics s);
+
     // update inner nodes, sets color to average child color
     void updateInnerOccupancy();
 

@@ -14,6 +14,17 @@ void printUsage(char* self){
   exit(1);
 }
 
+void print_query_info(point3d query, SemanticOcTreeNode* node) {
+  if (node != NULL) {
+    cout << "occupancy probability at " << query << ":\t " << node->getOccupancy() << endl;
+    cout << "color of node is: " << node->getColor() << endl;
+    cout << "Semantics of node is: " << node->getSemantics() << endl;
+  }
+  else
+    cout << "occupancy probability at " << query << ":\t is unknown" << endl;
+}
+
+
 int main(int argc, char** argv) {
   if (argc != 2){
     printUsage(argv[0]);
@@ -39,9 +50,19 @@ int main(int argc, char** argv) {
 
     // insert in global coordinates:
     tree.insertPointCloud(*cloud, origin.trans());
+    
+    // fuse extra information
+    for (int i = 0; i < (int)cloud->size(); ++i) {
+      const point3d& query = (*cloud)[i];
+      std::vector<float> extra_info = cloud->getExtraInfo(i);
+      SemanticOcTreeNode* n = tree.search (query);
+      tree.averageNodeColor(n, extra_info[0], extra_info[1], extra_info[2]);
+      //print_query_info(query, n);      
+    }
 
-    tree.write("semantic_scan.ot");
+    tree.write("semantic_color_scan.ot");
   }
+
   
   cout << "Test done." << endl;
   exit(0);
