@@ -284,6 +284,30 @@ namespace octomap {
     return s;
   }
 
+  std::istream& Pointcloud::readExtraInfo(std::istream &s, unsigned int n){
+      while (!s.eof()){
+        point3d p;
+        float t;
+        std::vector<float> info;
+        for (unsigned int i=0; i<3; i++){
+          s >> p(i);
+        }
+        for (unsigned int i=0; i<n; i++){
+          s >> t;
+          info.push_back(t);
+        }
+        if (!s.fail()){
+          this->push_back(p);
+          extra_info.push_back(info);
+        } else {
+          break;
+        }
+      }
+
+      return s;
+    }
+
+
   std::istream& Pointcloud::readBinary(std::istream &s) {
 
     uint32_t pc_size = 0;

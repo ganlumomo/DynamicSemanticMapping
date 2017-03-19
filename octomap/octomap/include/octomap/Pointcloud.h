@@ -105,19 +105,21 @@ namespace octomap {
     /// Returns a copy of the ith point in point cloud.
     /// Use operator[] for direct access to point reference.
     point3d getPoint(unsigned int i) const;   // may return NULL
-
+    
     inline const point3d& operator[] (size_t i) const { return points[i]; }
     inline point3d& operator[] (size_t i) { return points[i]; }
-
+    inline std::vector<float>& getExtraInfo(size_t i) { return extra_info[i]; }
     // I/O methods
 
     std::istream& readBinary(std::istream &s);
     std::istream& read(std::istream &s);
+    std::istream& readExtraInfo(std::istream &s, unsigned int n);
     std::ostream& writeBinary(std::ostream &s) const;
-
+  
   protected:
     pose6d               current_inv_transform;
     point3d_collection   points;
+    std::vector<std::vector<float> > extra_info;
   };
 
 }
