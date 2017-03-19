@@ -1,3 +1,4 @@
+#include <iostream>
 #include <octomap/octomap.h>
 #include <octomap/SemanticOcTree.h>
 #include "testing.h"
@@ -9,8 +10,8 @@ using namespace octomap;
 void print_query_info(point3d query, SemanticOcTreeNode* node) {
   if (node != NULL) {
     cout << "occupancy probability at " << query << ":\t " << node->getOccupancy() << endl;
-    cout << "color of node is: " << node->getColor()
-         << endl;    
+    cout << "color of node is: " << node->getColor() << endl;    
+    cout << "Semantics of node is: " << node->getSemantics() << endl;
   }
   else 
     cout << "occupancy probability at " << query << ":\t is unknown" << endl;  
@@ -28,6 +29,20 @@ int main(int argc, char** argv) {
         point3d endpoint ((float) x*0.05f+0.01f, (float) y*0.05f+0.01f, (float) z*0.05f+0.01f);
         SemanticOcTreeNode* n = tree.updateNode(endpoint, true); 
         n->setColor(z*5+100,x*5+100,y*5+100); 
+        std::vector<float> labels;
+        labels.push_back(0.7);
+        labels.push_back(0.2);
+        labels.push_back(0.1);
+        labels.push_back(0.7);
+        labels.push_back(0.2);
+        labels.push_back(0.1);
+        labels.push_back(0.7);
+        labels.push_back(0.2);
+        labels.push_back(0.1);
+        labels.push_back(0.7);
+        labels.push_back(0.2);
+        labels.push_back(0.1);
+        n->setSemantics(labels);
       }
     }
   }
@@ -39,6 +54,20 @@ int main(int argc, char** argv) {
         point3d endpoint ((float) x*0.02f+2.0f, (float) y*0.02f+2.0f, (float) z*0.02f+2.0f);
         SemanticOcTreeNode* n = tree.updateNode(endpoint, false); 
         n->setColor(255,255,0); // set color to yellow
+        std::vector<float> labels;
+        labels.push_back(0.5);
+        labels.push_back(0.3);
+        labels.push_back(0.2);
+        labels.push_back(0.7);
+        labels.push_back(0.2);
+        labels.push_back(0.1);
+        labels.push_back(0.7);
+        labels.push_back(0.2);
+        labels.push_back(0.1);
+        labels.push_back(0.7);
+        labels.push_back(0.2);
+        labels.push_back(0.1);
+        n->setSemantics(labels);
       }
     }
   }

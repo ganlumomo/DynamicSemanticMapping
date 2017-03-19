@@ -82,8 +82,46 @@ namespace octomap {
   }
 
 
+  SemanticOcTreeNode::Semantics SemanticOcTreeNode::getAverageChildSemantics() const {
+    std::vector<float> mlabel;
+    int c = 0;
+
+    if (children != NULL){
+      for (int i=0; i<8; i++) {
+        SemanticOcTreeNode* child = static_cast<SemanticOcTreeNode*>(children[i]);
+        if (child != NULL && child->isSemanticsSet()) {
+          std::vector<float> clabel = child->getSemantics().label;
+          if (mlabel.empty())
+            mlabel.reserve(clabel.size());
+          else if (mlabel.size() < clabel.size())
+            mlabel.resize(clabel.size());
+
+          for(unsigned int l=0; l<clabel.size(); l++) {
+            mlabel[l] += clabel[l];
+          }
+          ++c;
+        }
+      }
+    }
+    
+    if (c > 0) {
+      for (unsigned int l=0; l<mlabel.size(); l++) {
+        mlabel[l] /= c;
+      }
+      return Semantics(mlabel);
+    }
+    else { // no child had a color other than white
+      return Semantics();
+    }
+  }
+
+
   void SemanticOcTreeNode::updateColorChildren() {      
     color = getAverageChildColor();
+  }
+  
+  void SemanticOcTreeNode::updateSemanticsChildren() {      
+    semantics = getAverageChildSemantics();
   }
 
 
@@ -111,6 +149,7 @@ namespace octomap {
       }
       node->updateOccupancyChildren();
       node->updateColorChildren();
+      node->updateSemanticsChildren();
     }
   }
   
@@ -118,6 +157,14 @@ namespace octomap {
       SemanticOcTreeNode::Color const& c) {
     return out << '(' << (unsigned int)c.r << ' ' << (unsigned int)c.g << ' ' << (unsigned int)c.b <<
                   ')';
+  }
+
+  std::ostream& operator<<(std::ostream& out,
+      SemanticOcTreeNode::Semantics const& s) {
+    for (unsigned i=0; i<s.label.size(); i++) {
+      out << s.label[i] << ' ';
+    }
+    return out;
   }
 
 
