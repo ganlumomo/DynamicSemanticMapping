@@ -27,3 +27,8 @@ Makefile
 *.bt
 *.ot
 *.graph
+
+# tags
+projtags.sh
+tags
+*.swp
