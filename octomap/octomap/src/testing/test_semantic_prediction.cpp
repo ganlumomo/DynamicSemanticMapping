@@ -72,6 +72,27 @@ int main(int argc, char** argv) {
     }
   }//end for
 
+	// Prediction
+	
+	SemanticOcTree temp_tree (0.05);
+	Pointcloud* new_cloud = new Pointcloud();
+	std::string filename = std::string(argv[1]);
+	std::ifstream infile(filename.c_str());
+	while (infile) {
+	  new_cloud->readExtraInfo(infile, 3);
+	}
+	float sceneflow[3] = {1.0, 1.0, 1.0};
+
+	for (int i=0; i< (int)new_cloud->size(); ++i)
+	{
+	  const point3d& query = (*new_cloud)[i];
+	  SemanticOcTreeNode* n = tree.search (query);
+	  SemanticOcTreeNode::Semantics s = n->getSemantics();
+	  std::vector<float> label = s.label;
+	  std::cout << label << std::endl;	
+
+	}
+
 
   // traverse the whole tree, set color based on semantics to visualize
   for (SemanticOcTree::iterator it = tree.begin(); it != tree.end(); ++it) {
