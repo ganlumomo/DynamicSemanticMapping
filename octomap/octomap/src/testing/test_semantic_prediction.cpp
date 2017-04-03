@@ -4,9 +4,11 @@
 #include <octomap/math/Utils.h>
 #include <octomap/SemanticOcTree.h>
 #include "testing.h"
+#include <eigen3/Eigen/Core>
 
 using namespace std;
 using namespace octomap;
+using namespace Eigen;
 
 void printUsage(char* self){
   std::cerr << "\nUSAGE: " << self << " 5 x point_cloud.txt  (point cloud file, required)\n\n";
@@ -82,7 +84,27 @@ int main(int argc, char** argv) {
 	  new_cloud->readExtraInfo(infile, 3);
 	}
 	float sceneflow[3] = {1.0, 1.0, 1.0};
-
+	//MatrixXf flowSigma[3][3] = {{2.0,0,0},{0,2,0},{0,0,2}};
+	MatrixXf flowSigma(3,3);
+	MatrixXf V;
+	MatrixXf S;
+	flowSigma << 1,0,0,
+				0,2,0,
+				0,0,1;
+	
+	
+	JacobiSVD<MatrixXf> svd(flowSigma, ComputeThinU | ComputeThinV);
+	V = svd.matrixV(); // need to define
+	S = svd.singularValues();
+	float D[3][3] = {{0,0,0},{0,0,0},{0,0,0}}; 
+	for (int i = 0; i < 3;i ++){
+		D[i][i] = sqrt(S(i));
+	}
+	float random[3] = {rand(),rand(),rand()};
+	float error[3];
+	for (int i = 0;i < 3;i++){
+		error[i] = V(i,1)*D[1][1]*random[1] + V(i,2)*D[2][2]*random[2] + V(i,3)*D[3][3]*random[3]; 
+	}
 	for (int i=0; i< (int)new_cloud->size(); ++i)
 	{
 	  const point3d& query = (*new_cloud)[i];
@@ -90,7 +112,11 @@ int main(int argc, char** argv) {
 	  SemanticOcTreeNode::Semantics s = n->getSemantics();
 	  std::vector<float> label = s.label;
 	  std::cout << label << std::endl;	
-
+	  const point3d& new_pos;
+	  for (int j=0;j<3;j++){
+		  new_pos[j] = query[j] + sceneflow[i] + error[i];
+	  }   ////
+//	  int np = sampleFlow();
 	}
 
 
