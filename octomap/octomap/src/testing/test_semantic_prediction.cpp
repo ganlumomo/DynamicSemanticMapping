@@ -5,6 +5,7 @@
 #include <octomap/SemanticOcTree.h>
 #include "testing.h"
 #include <eigen3/Eigen/Core>
+#include <eigen3/Eigen/SVD>
 
 using namespace std;
 using namespace octomap;
