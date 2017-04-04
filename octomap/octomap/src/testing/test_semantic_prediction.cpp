@@ -1,11 +1,14 @@
 
 #include <stdio.h>
+#include <stdlib.h>     /* srand, rand */
 #include <octomap/octomap.h>
 #include <octomap/math/Utils.h>
 #include <octomap/SemanticOcTree.h>
 #include "testing.h"
 #include <eigen3/Eigen/Core>
 #include <eigen3/Eigen/SVD>
+#include <time.h>       /* time */
+
 
 using namespace std;
 using namespace octomap;
@@ -28,11 +31,54 @@ void print_query_info(point3d query, SemanticOcTreeNode* node) {
 }
 
 
+int sampleFlow(VectorXf sceneflow,MatrixXf flowSigma){
+//	
+//	//Do svd
+//	//
+//	float sceneflow[3] = {1.0, 1.0, 1.0};
+	
+	MatrixXf V;
+	MatrixXf S;
+	MatrixXf D(3,3);
+	D << 0,0,0,
+		 0,0,0,
+		0,0,0;
+	VectorXf random(3);
+	VectorXf error;
+//	flowSigma << 1,0,0,
+//				0,8,0,
+////				0,0,1;
+//	
+//	
+	JacobiSVD<MatrixXf> svd(flowSigma, ComputeThinU | ComputeThinV);
+	V = svd.matrixV(); // need to define
+	S = svd.singularValues();
+	cout<<"S matrix->"<<"\n"<< S << endl;
+	cout<<"V matrix->"<<"\n"<< V << endl;
+	
+	
+	for (int i = 0; i < 3;i ++){
+		D(i,i) = sqrt(S(i));
+		random(i) = (double) rand() / (RAND_MAX);
+	}
+//	
+	cout << "D - mAtrix" <<"\n"<< D << endl;
+	error = V*D*random;
+	cout << error << "error" << "\n" << endl;
+	return 1;
+	
+//	for (int i = 0;i < 3;i++){
+//		error[i] = V(i,0)*D[0][0]*random[0] + V(i,1)*D[1][1]*random[1] + V(i,2)*D[2][2]*random[2]; 
+//		cout << error[i] << "  error" << "\n" << endl;
+//	}
+//	
+}
+
 int main(int argc, char** argv) {
   if (argc < 2){
     printUsage(argv[0]);
   }
-
+  srand (time(NULL));
   
   SemanticOcTree tree (0.05);
   float labels[5][5]= {{1, 0, 0, 0, 0}, {0, 1, 0, 0, 0}};
@@ -82,40 +128,34 @@ int main(int argc, char** argv) {
 	std::string filename = std::string(argv[1]);
 	std::ifstream infile(filename.c_str());
 	while (infile) {
+		
 	  new_cloud->readExtraInfo(infile, 3);
 	}
-	float sceneflow[3] = {1.0, 1.0, 1.0};
+	VectorXf sceneflow(3);
+	sceneflow << 1.0, 1.0, 1.0;
 	//MatrixXf flowSigma[3][3] = {{2.0,0,0},{0,2,0},{0,0,2}};
 	MatrixXf flowSigma(3,3);
-	MatrixXf V;
-	MatrixXf S;
+	
 	flowSigma << 1,0,0,
-				0,2,0,
+				0,8,0,
 				0,0,1;
+				
+	int go;
+	go = sampleFlow(sceneflow, flowSigma);
+	float error[3] = {0,0,0};
 	
-	
-	JacobiSVD<MatrixXf> svd(flowSigma, ComputeThinU | ComputeThinV);
-	V = svd.matrixV(); // need to define
-	S = svd.singularValues();
-	float D[3][3] = {{0,0,0},{0,0,0},{0,0,0}}; 
-	for (int i = 0; i < 3;i ++){
-		D[i][i] = sqrt(S(i));
-	}
-	float random[3] = {rand(),rand(),rand()};
-	float error[3];
-	for (int i = 0;i < 3;i++){
-		error[i] = V(i,1)*D[1][1]*random[1] + V(i,2)*D[2][2]*random[2] + V(i,3)*D[3][3]*random[3]; 
-	}
 	for (int i=0; i< (int)new_cloud->size(); ++i)
 	{
 	  const point3d& query = (*new_cloud)[i];
 	  SemanticOcTreeNode* n = tree.search (query);
 	  SemanticOcTreeNode::Semantics s = n->getSemantics();
 	  std::vector<float> label = s.label;
-	  std::cout << label << std::endl;	
-	  const point3d& new_pos;
+//	  std::cout << label << std::endl;	
+//	  const point3d& new_pos = (*new_cloud)[i];
+	  float new_pos[3];
 	  for (int j=0;j<3;j++){
-		  new_pos[j] = query[j] + sceneflow[i] + error[i];
+		  new_pos[j] = query(j) + sceneflow[j] + error[j];
+//		  cout << "new_pos " << new_pos[j] << "  query  " << query(j) << "\n" << endl;
 	  }   ////
 //	  int np = sampleFlow();
 	}
@@ -143,3 +183,6 @@ int main(int argc, char** argv) {
   exit(0);
 
 }
+
+
+//	
