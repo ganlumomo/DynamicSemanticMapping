@@ -105,15 +105,18 @@ int main(int argc, char** argv) {
   // Prediction
   
   SemanticOcTree temp_tree (0.05);
+  pose6d origin(0, 0, 0, 0, 0, 0);
+  
   Pointcloud* new_cloud = new Pointcloud();
+  
   std::string filename = std::string(argv[1]);
   std::ifstream infile(filename.c_str());
   while (infile) {
-    
     new_cloud->readExtraInfo(infile, 3);
   }
+  temp_tree.insertPointCloud(*new_cloud, origin.trans());
   VectorXf sceneflow(3);
-  sceneflow << 3.0, 3.0, 3.0;
+  sceneflow << 20.0, 20.0, 20.0;
   //MatrixXf flowSigma[3][3] = {{2.0,0,0},{0,2,0},{0,0,2}};
   MatrixXf flowSigma(3,3);
   
@@ -145,13 +148,14 @@ int main(int argc, char** argv) {
 //      // fuse extra information
 ////      for (int i=0; i < (int)new_cloud->size(); ++i) {
 //        //        //std::vector<float> extra_info = cloud->getExtraInfo(i);
-//        SemanticOcTreeNode* n1 = temp_tree.search (new_pos);
-//        temp_tree.averageNodeSemantics(n1, label);
+        SemanticOcTreeNode* n1 = tree.search (new_pos);
+        tree.averageNodeSemantics(n1, label);
 //        //print_query_info(query, n);  
   }
     
+//	
+//FOR SANITY 
   
-
 
   // traverse the whole tree, set color based on semantics to visualize
   for (SemanticOcTree::iterator it = tree.begin(); it != tree.end(); ++it) {
@@ -168,10 +172,10 @@ int main(int argc, char** argv) {
   }//end for
 
 
-  tree.write("semantic_color_scan.ot");
+  tree.write("semantic_color_scan_Moved.ot");
 
-
-  // traverse the whole tree, set color based on semantics to visualize
+//
+//  // traverse the whole tree, set color based on semantics to visualize
 //  for (SemanticOcTree::iterator it = temp_tree.begin(); it != temp_tree.end(); ++it) {
 //    if ( (&(*it))->isSemanticsSet() ) {
 //      SemanticOcTreeNode::Semantics s = (&(*it))->getSemantics();
