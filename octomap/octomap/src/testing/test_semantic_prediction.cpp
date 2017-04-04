@@ -31,7 +31,7 @@ void print_query_info(point3d query, SemanticOcTreeNode* node) {
 }
 
 
-int sampleFlow(VectorXf sceneflow,MatrixXf flowSigma){
+VectorXf sampleFlow(VectorXf sceneflow,MatrixXf flowSigma){
 //	
 //	//Do svd
 //	//
@@ -45,33 +45,21 @@ int sampleFlow(VectorXf sceneflow,MatrixXf flowSigma){
 		0,0,0;
 	VectorXf random(3);
 	VectorXf error;
-//	flowSigma << 1,0,0,
-//				0,8,0,
-////				0,0,1;
-//	
-//	
+
 	JacobiSVD<MatrixXf> svd(flowSigma, ComputeThinU | ComputeThinV);
 	V = svd.matrixV(); // need to define
 	S = svd.singularValues();
-	cout<<"S matrix->"<<"\n"<< S << endl;
-	cout<<"V matrix->"<<"\n"<< V << endl;
-	
+	// cout<<"S matrix->"<<"\n"<< S << endl;
+	// cout<<"V matrix->"<<"\n"<< V << endl;
 	
 	for (int i = 0; i < 3;i ++){
 		D(i,i) = sqrt(S(i));
 		random(i) = (double) rand() / (RAND_MAX);
 	}
 //	
-	cout << "D - mAtrix" <<"\n"<< D << endl;
 	error = V*D*random;
-	cout << error << "error" << "\n" << endl;
-	return 1;
-	
-//	for (int i = 0;i < 3;i++){
-//		error[i] = V(i,0)*D[0][0]*random[0] + V(i,1)*D[1][1]*random[1] + V(i,2)*D[2][2]*random[2]; 
-//		cout << error[i] << "  error" << "\n" << endl;
-//	}
-//	
+	return error;
+
 }
 
 int main(int argc, char** argv) {
@@ -83,7 +71,7 @@ int main(int argc, char** argv) {
   SemanticOcTree tree (0.05);
   float labels[5][5]= {{1, 0, 0, 0, 0}, {0, 1, 0, 0, 0}};
   int color[5][3] = {{255, 0, 0}, {0, 255, 0}};
- 
+  VectorXf error;
 
   for ( int argn = 0; argn < argc-1; argn++) {
     // read frame pose from text file
@@ -140,10 +128,8 @@ int main(int argc, char** argv) {
 				0,8,0,
 				0,0,1;
 				
-	int go;
-	go = sampleFlow(sceneflow, flowSigma);
-	float error[3] = {0,0,0};
-	
+	error = sampleFlow(sceneflow, flowSigma);
+
 	for (int i=0; i< (int)new_cloud->size(); ++i)
 	{
 	  const point3d& query = (*new_cloud)[i];
