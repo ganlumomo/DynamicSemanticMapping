@@ -116,12 +116,12 @@ int main(int argc, char** argv) {
   }
   temp_tree.insertPointCloud(*new_cloud, origin.trans());
   VectorXf sceneflow(3);
-  sceneflow << 20.0, 20.0, 20.0;
+  sceneflow << 2.0, 2.0, 2.0;
   //MatrixXf flowSigma[3][3] = {{2.0,0,0},{0,2,0},{0,0,2}};
   MatrixXf flowSigma(3,3);
   
   flowSigma << 1,0,0,
-        0,8,0,
+        0,1,0,
         0,0,1;
   VectorXf error(3);
   error = sampleFlow(sceneflow, flowSigma);
@@ -137,7 +137,7 @@ int main(int argc, char** argv) {
     point3d new_pos;
 //    float new_pos[3];
     for (int j=0;j<3;j++){
-      new_pos(j) = query(j) + sceneflow(j) + error(j);
+      new_pos(j) = query(j) + sceneflow(j) + 0*error(j);
       cout << "new_pos " << new_pos(j) << "  query  " << query(j) << "\n" << endl;
     }
     
@@ -148,8 +148,11 @@ int main(int argc, char** argv) {
 //      // fuse extra information
 ////      for (int i=0; i < (int)new_cloud->size(); ++i) {
 //        //        //std::vector<float> extra_info = cloud->getExtraInfo(i);
-        SemanticOcTreeNode* n1 = tree.search (new_pos);
-        tree.averageNodeSemantics(n1, label);
+        
+        float ol = 10.0;
+        SemanticOcTreeNode* newNode = tree.setNodeValue(new_pos, ol);
+        newNode->setSemantics(s);
+        //tree.averageNodeSemantics(newNode, label);
 //        //print_query_info(query, n);  
   }
     
