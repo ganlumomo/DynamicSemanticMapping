@@ -25,6 +25,31 @@ void print_query_info(point3d query, SemanticOcTreeNode* node) {
 }
 
 
+float calcNewOccupancy(double pl, double pg)
+{
+  double npl = 1.0-pl;
+  double npg = 1.0-pg;
+
+  // normalization
+  double pg_new = pl*pg;
+  double npg_new = npl*npg;
+  pg_new = pg_new/(pg_new+npg_new);
+
+  return octomap::logodds(pg_new);
+}
+
+
+std::vector<float> calNewSemantics(
+    SemanticOcTreeNode::Semantics sl, SemanticOcTreeNode::Semantics sg) {
+  std::vector<float> sg_new;
+  for (int i = 0; i < (int)sl.label.size(); i++) {
+    float s_new = sl.label[i] * sg.label[i];
+    sg_new.push_back(s_new);
+  }
+  return sg_new;
+}
+
+
 int main(int argc, char** argv) {
   if (argc < 2){
     printUsage(argv[0]);
@@ -36,10 +61,9 @@ int main(int argc, char** argv) {
 
   // build a measurement local tree 
   SemanticOcTree localTree (0.05);
-  float labels[5][5]= {{0.7, 0.3, 0, 0, 0}, {0.3, 0.7, 0, 0, 0}, {0, 0, 1, 0, 0}, {0, 0, 0, 1, 0}, {0, 0, 0, 0, 1}};
+  float labels[5][5]= {{0.3, 0.2, 0, 0, 0}, {0.2, 0.3, 0, 0, 0}, {0, 0, 1, 0, 0}, {0, 0, 0, 1, 0}, {0, 0, 0, 0, 1}};
   int color[5][3] = {{255, 0, 0}, {0, 255, 0}, {0, 0, 255}, {255, 20, 147}, {0, 255, 255}};
  
-
   for ( int argn = 0; argn < argc-1; argn++) {
     // read frame pose from text file
     std::string filename = std::string(argv[argn+1]);
@@ -47,7 +71,7 @@ int main(int argc, char** argv) {
     
     // prepare label for current class
     std::vector<float> label;
-    for (int c = 0; c < argc-1; c++) {
+    for (int c = 0; c < argc; c++) {
       label.push_back(labels[argn][c]);
     }
 
@@ -75,6 +99,17 @@ int main(int argc, char** argv) {
       }
     }
   }//end for
+
+  // add semantics to all other nodes
+  std::vector<float> other_label;
+  for (int c = 0; c < argc; c++){
+    other_label.push_back(labels[argc-1][c]);
+  }
+  for (SemanticOcTree::iterator it = localTree.begin(); it != localTree.end(); ++it) {
+    if ( !it->isSemanticsSet() ) {
+      localTree.averageNodeSemantics((&(*it)), other_label);
+    }
+  }
   // end building local tree
 
 
@@ -95,7 +130,7 @@ int main(int argc, char** argv) {
       // set the semantics
       SemanticOcTreeNode::Semantics sl = it->getSemantics();
       newNode->setSemantics(sl);
-
+      newNode->resetSemanticsCount();
     }
   } 
 
@@ -116,47 +151,29 @@ int main(int argc, char** argv) {
       // set the semantics
       SemanticOcTreeNode::Semantics sl = it->getSemantics();
       newNode->setSemantics(sl);
+      newNode->resetSemanticsCount();
 
     } else{
       // update occupancy prob according to Eq.(7) in paper
       double pl = it->getOccupancy();
-      double npl = 1.0-pl;
       double pg = n->getOccupancy();
-      double npg = 1.0-pg;
-
-      // normalization
-      double pg_new = pl*pg;
-      double npg_new = npl*npg;
-      pg_new = pg_new/(pg_new+npg_new);
+      float og_new = calcNewOccupancy(pl, pg);
+      n->setLogOdds(og_new);
       
-      // set new value
-      float ol = octomap::logodds(pg_new);
-      n->setLogOdds(ol);
-      
-      SemanticOcTreeNode::Semantics sl = it->getSemantics();
       // if the global node does not have semantics, set as the local value
       if(!n->isSemanticsSet()) {
-        n->setSemantics(sl);
+        OCTOMAP_ERROR("something wrong..");
         continue;
       }
 
       // else update semantics according to Eq.(7) in paper
+      SemanticOcTreeNode::Semantics sl = it->getSemantics();
       SemanticOcTreeNode::Semantics sg = n->getSemantics();
-      std::vector<float> sg_new;
-      float factor = 0;
-      for (int i = 0; i < (int)sl.label.size(); i++) {
-        float s_new = sl.label[i] * sg.label[i];
-        factor += s_new;
-        sg_new.push_back(s_new);
-      }
-      
-      // normalization
-      for (int i = 0; i < (int)sg_new.size(); i++) {
-        sg_new[i] /= factor;
-      }
-
+      std::vector<float> sg_new = calNewSemantics(sl, sg);
+  
       // set new value
       n->setSemantics(sg_new);
+      n->normalizeSemantics();
     }
   }
 
@@ -172,8 +189,9 @@ int main(int argc, char** argv) {
       OCTOMAP_ERROR("something wrong...\n");
     } else{
       //cout << it->getOccupancy() << " " << n->getOccupancy() << endl;
-      if(n->isSemanticsSet())
-        cout << it->getSemantics().label << " " << n->getSemantics().label << endl;
+      //if(n->isSemanticsSet())
+        //cout << it->getSemantics().label << it->getSemantics().count << " "
+          //<< n->getSemantics().label << n->getSemantics().count << endl;
     }
   }
 
@@ -185,7 +203,7 @@ int main(int argc, char** argv) {
       // Debug
       //print_query_info(point3d(0,0,0), &(*it));  
       for (int argn = 0; argn < argc-1; argn++) {
-        if (s.label.size() && s.label[argn] > 0.8) {
+        if (s.label.size() && s.label[argn] > 0.6) {
           (&(*it))->setColor(color[argn][0], color[argn][1], color[argn][2]);
         }
       }
@@ -202,7 +220,7 @@ int main(int argc, char** argv) {
       // Debug
       //print_query_info(point3d(0,0,0), &(*it));  
       for (int argn = 0; argn < argc-1; argn++) {
-        if (s.label.size() && s.label[argn] > 0.8) {
+        if (s.label.size() && s.label[argn] > 0.6) {
           (&(*it))->setColor(color[argn][0], color[argn][1], color[argn][2]);
         }
       }
