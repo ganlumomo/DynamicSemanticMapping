@@ -236,6 +236,23 @@ for (int i=0; i< (int)new_cloud->size(); ++i){
  
 
 //update the original tree
+for (SemanticOcTree::leaf_iterator it = temp_tree->begin_leafs(),
+    end = temp_tree->end_leafs(); it != end; ++it)
+{
+  point3d queryCoord = it.getCoordinate();
+    
+  // update occupancy
+  double pl = it->getOccupancy();
+  SemanticOcTreeNode* n = tree.setLogOdds(queryCoord, octomap::logodds(pl));
+  
+  // update semantics
+  SemanticOcTreeNode::Semantics sl = it->getSemantics();
+  n->setSemantics(sl);
+
+  // debug
+  //cout<< it->getOccupancy() << " " << n->getOccupancy() << " "
+    //<< it->getSemantics().label << n->getSemantics().label << endl;
+}
 
 
 //	
