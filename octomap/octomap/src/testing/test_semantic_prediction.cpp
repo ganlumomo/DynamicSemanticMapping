@@ -10,6 +10,7 @@
 #include <time.h>       /* time */
 #include <algorithm>    // std::find
 #include <vector>       // std::vector
+#include <random>
 
 using namespace std;
 using namespace octomap;
@@ -221,11 +222,41 @@ int nop = 10; // Nuumber of particles
 
 //smoothing
 
-for (int i=0; i< (int)new_cloud->size(); ++i){
-	const point3d& query = (*new_cloud)[i];
-    SemanticOcTreeNode* n = temp_tree.search (query);
+for (SemanticOcTree::iterator it = temp_tree.begin(); it != temp_tree.end(); ++it) {
+	
     SemanticOcTreeNode::Semantics s = n->getSemantics();
-	SemanticOcTreeNode::Semanti
+	vector<float> lo = s.label;
+	vector<float> occupancy;
+	vector<float> labels;
+	vector<float> upd_labels;
+	for(int m = 0; m < NUMBER_LABELS;m++){// Define NUMBER_LABELS
+		labels.push_back(lo[m]);
+	}
+	occupancy.push_back(lo[NUMBER_LABELS]);
+	occupancy.push_back(lo[NUMBER_LABELS+1]);
+	
+	//Define SMOOTHFACTOR
+	//labels smoothening
+	float lab_sf = SMOOTHFACTOR;
+	float lab_sf_o = (1 - lab_sf)/(labels.size() - 1);
+	float norm_sum = 0;
+	for(int m = 0;m<labels.size();m++){
+		float sum = 0;
+		for(int n = 0;n <labels.size();n++){
+			if(m == n){
+				sum = sum + (labels[n]*lab_sf);
+			}
+			else{
+				sum = sum + (labels[n]*lab_sf_o);
+			}
+		}
+		norm_sum = norm_sum + sum;
+		upd_labels.push_back(sum);
+	}
+	
+	
+	
+	
 }
   
 
