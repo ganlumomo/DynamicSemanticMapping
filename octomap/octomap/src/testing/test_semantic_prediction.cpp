@@ -152,7 +152,7 @@ int main(int argc, char** argv) {
 
 
 //second loop for all the points, propagate using sceneflow
-int nop = 100; // Nuumber of particles
+int nop = 10; // Nuumber of particles
 // sf_cloud is assumed to contain infor about sceneflow too
   for (int i=0; i< (int)new_cloud->size(); ++i)
   {
@@ -160,13 +160,24 @@ int nop = 100; // Nuumber of particles
     const point3d& point_flow = (*sceneflow)[i];
     SemanticOcTreeNode* n = tree.search (query);
     SemanticOcTreeNode::Semantics s = n->getSemantics();
+//	SIMALRLY GET OCTREENode OCCUPANCY AND STORE IT
 //  Need to get corrsponding weights
     std::vector<float> label = s.label;
-    std::cout << label << std::endl;  
+//    std::cout << label << std::endl;
+	// Get weight
+//	int weight = nop*(point_voxel_map[i]) 
+//	Need to verify this
+	std:: vector<float> new_so;
+	for(int m = 0; m < label.size();m++){
+		new_so.push_back(label[m]/weight); 
+	}
+	new_so.push_back(occ/weight); // OCC IS PROBABILITY OF OCCUPIED
+	new_so.push_back((1-occ)/weight);
+	
     for (int k = 0; k < nop ; k++){
         
         point3d new_pos;
-        error = sampleFlow(flowSigma);// Need to get flowSigma
+        VectorXf error = sampleFlow(flowSigma);// Need to get flowSigma
 
         for (int j=0;j<3;j++){
           new_pos(j) = query(j) + point_flow(j) + error(j);
@@ -176,20 +187,30 @@ int nop = 100; // Nuumber of particles
         float ol = 10.0;
         
         SemanticOcTreeNode* newNode = temp_tree.search(new_pos);
-        if(newNode == NULL){
+		// If node doesn't exist we add the semantics combined with occcupancy directly.        
+		
+		if(newNode == NULL){
         SemanticOcTreeNode* newNode = temp_tree.setNodeValue(new_pos, ol);
-
-        newNode->setSemantics(s);
+        
+		newNode->setSemantics(new_so); // Need to check this 
+		
+//		We need to get occupancy from Octree. NOT SURE OF COMMAND
         //tree.averageNodeSemantics(newNode, label);
 //        //print_query_info(query, n);  
   
         }
         else{
-
-      
+			SemanticOcTreeNode::Semantics curr_so = newNode -> getSemantic();
+			vector<float> temp;
+			for(int m = 0;m < curr_so.size();m++){
+				temp.push_back(curr_so[m]+new_so[m]);
+			}
+			newNode -> setSemantics(temp);
         }
     }
   }
+  
+  
 
 
 //store in temp tree. Delete voxels 
@@ -198,12 +219,20 @@ int nop = 100; // Nuumber of particles
 
 
 
+//smoothing
 
+for (int i=0; i< (int)new_cloud->size(); ++i){
+	const point3d& query = (*new_cloud)[i];
+    SemanticOcTreeNode* n = temp_tree.search (query);
+    SemanticOcTreeNode::Semantics s = n->getSemantics();
+	SemanticOcTreeNode::Semanti
+}
+  
 
 //normalize
 
 
-//smoothing
+
  
 
 //update the original tree
