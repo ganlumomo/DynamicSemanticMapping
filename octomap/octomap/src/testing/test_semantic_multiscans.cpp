@@ -30,13 +30,9 @@ int main(int argc, char** argv) {
     printUsage(argv[0]);
   }
 
-  // the global tree
+  
   SemanticOcTree tree (0.05);
-
-
-  // build a measurement local tree 
-  SemanticOcTree localTree (0.05);
-  float labels[5][5]= {{0.7, 0.3, 0, 0, 0}, {0.3, 0.7, 0, 0, 0}, {0, 0, 1, 0, 0}, {0, 0, 0, 1, 0}, {0, 0, 0, 0, 1}};
+  float labels[5][5]= {{1, 0, 0, 0, 0}, {0, 1, 0, 0, 0}, {0, 0, 1, 0, 0}, {0, 0, 0, 1, 0}, {0, 0, 0, 0, 1}};
   int color[5][3] = {{255, 0, 0}, {0, 255, 0}, {0, 0, 255}, {255, 20, 147}, {0, 255, 255}};
  
 
@@ -63,136 +59,18 @@ int main(int argc, char** argv) {
     // insert into OcTree  
     {
       // insert in global coordinates:
-      localTree.insertPointCloud(*cloud, origin.trans());
+      tree.insertPointCloud(*cloud, origin.trans());
       
       // fuse extra information
       for (int i=0; i < (int)cloud->size(); ++i) {
         const point3d& query = (*cloud)[i];
         //std::vector<float> extra_info = cloud->getExtraInfo(i);
-        SemanticOcTreeNode* n = localTree.search (query);
-        localTree.averageNodeSemantics(n, label);
+        SemanticOcTreeNode* n = tree.search (query);
+        tree.averageNodeSemantics(n, label);
         //print_query_info(query, n);  
       }
     }
   }//end for
-  // end building local tree
-
-
-  
-  cout << "Expanded num. leafs: " << tree.getNumLeafNodes() << endl;
-  // update the global tree according to local tree
-  for (SemanticOcTree::leaf_iterator it = localTree.begin_leafs(),
-      end = localTree.end_leafs(); it != end; ++it)
-  {
-    point3d queryCoord = it.getCoordinate();
-    SemanticOcTreeNode* n = tree.search(queryCoord);
-    if (n==NULL){
-      // create a new node in global tree with the same coord
-      // set the occupancy log odds
-      double pl = it->getOccupancy();
-      float ol = octomap::logodds(pl);
-      SemanticOcTreeNode* newNode = tree.updateNode(queryCoord, ol);
-      // set the semantics
-      SemanticOcTreeNode::Semantics sl = it->getSemantics();
-      newNode->setSemantics(sl);
-
-    }
-  } 
-
-  
-  cout << "Expanded num. leafs: " << tree.getNumLeafNodes() << endl;
-  // update the global tree according to local tree
-  for (SemanticOcTree::leaf_iterator it = localTree.begin_leafs(),
-      end = localTree.end_leafs(); it != end; ++it)
-  {
-    point3d queryCoord = it.getCoordinate();
-    SemanticOcTreeNode* n = tree.search(queryCoord);
-    if (n==NULL){
-      // create a new node in global tree with the same coord
-      // set the occupancy log odds
-      double pl = it->getOccupancy();
-      float ol = octomap::logodds(pl);
-      SemanticOcTreeNode* newNode = tree.updateNode(queryCoord, ol);
-      // set the semantics
-      SemanticOcTreeNode::Semantics sl = it->getSemantics();
-      newNode->setSemantics(sl);
-
-    } else{
-      // update occupancy prob according to Eq.(7) in paper
-      double pl = it->getOccupancy();
-      double npl = 1.0-pl;
-      double pg = n->getOccupancy();
-      double npg = 1.0-pg;
-
-      // normalization
-      double pg_new = pl*pg;
-      double npg_new = npl*npg;
-      pg_new = pg_new/(pg_new+npg_new);
-      
-      // set new value
-      float ol = octomap::logodds(pg_new);
-      n->setLogOdds(ol);
-      
-      SemanticOcTreeNode::Semantics sl = it->getSemantics();
-      // if the global node does not have semantics, set as the local value
-      if(!n->isSemanticsSet()) {
-        n->setSemantics(sl);
-        continue;
-      }
-
-      // else update semantics according to Eq.(7) in paper
-      SemanticOcTreeNode::Semantics sg = n->getSemantics();
-      std::vector<float> sg_new;
-      float factor = 0;
-      for (int i = 0; i < (int)sl.label.size(); i++) {
-        float s_new = sl.label[i] * sg.label[i];
-        factor += s_new;
-        sg_new.push_back(s_new);
-      }
-      
-      // normalization
-      for (int i = 0; i < (int)sg_new.size(); i++) {
-        sg_new[i] /= factor;
-      }
-
-      // set new value
-      n->setSemantics(sg_new);
-    }
-  }
-
-
-  cout << "Expanded num. leafs: " << tree.getNumLeafNodes() << endl;
-
-  // test if the update is correct
-  for (SemanticOcTree::leaf_iterator it = localTree.begin_leafs(),
-      end = localTree.end_leafs(); it != end; ++it)
-  {
-    SemanticOcTreeNode* n = tree.search(it.getCoordinate());
-    if (n==NULL){
-      OCTOMAP_ERROR("something wrong...\n");
-    } else{
-      //cout << it->getOccupancy() << " " << n->getOccupancy() << endl;
-      if(n->isSemanticsSet())
-        cout << it->getSemantics().label << " " << n->getSemantics().label << endl;
-    }
-  }
-
- 
-  // traverse the local tree, set color based on semantics to visualize
-  for (SemanticOcTree::iterator it = localTree.begin(); it != localTree.end(); ++it) {
-    if ( (&(*it))->isSemanticsSet() ) {
-      SemanticOcTreeNode::Semantics s = (&(*it))->getSemantics();
-      // Debug
-      //print_query_info(point3d(0,0,0), &(*it));  
-      for (int argn = 0; argn < argc-1; argn++) {
-        if (s.label.size() && s.label[argn] > 0.8) {
-          (&(*it))->setColor(color[argn][0], color[argn][1], color[argn][2]);
-        }
-      }
-    }
-  }//end for
-
-  localTree.write("local_tree.ot");
 
 
   // traverse the whole tree, set color based on semantics to visualize
@@ -202,7 +80,7 @@ int main(int argc, char** argv) {
       // Debug
       //print_query_info(point3d(0,0,0), &(*it));  
       for (int argn = 0; argn < argc-1; argn++) {
-        if (s.label.size() && s.label[argn] > 0.8) {
+        if (s.label.size() && s.label[argn] > 0.3) {
           (&(*it))->setColor(color[argn][0], color[argn][1], color[argn][2]);
         }
       }
@@ -211,6 +89,7 @@ int main(int argc, char** argv) {
 
 
   tree.write("semantic_color_scan.ot");
+  
 
   cout << "Test done." << endl;
   exit(0);
