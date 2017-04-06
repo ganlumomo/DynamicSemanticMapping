@@ -66,12 +66,13 @@ namespace octomap {
  
     class Semantics {
     public:
-    Semantics() : label() {}
+    Semantics() : label(), count(0) {}
     Semantics(std::vector<float> _label)
-      : label(_label) {}
+      : label(_label), count(1) {}
       // TODO-ganlu: inline bool operator== (const Semantics &other) const{}
       // TODO-ganlu: inline bool operator!= (const Semantics &other) const{}
       std::vector<float> label;
+      unsigned int count;
     };
 
   public:
@@ -90,10 +91,15 @@ namespace octomap {
     Color& getColor() { return color; }
     
     inline Semantics getSemantics() const { return semantics; }
-    inline void setSemantics(Semantics s) {this->semantics = s; }
+    inline void setSemantics(Semantics s) {
+      this->semantics = s;
+    }
     inline void setSemantics(std::vector<float> label) {
       this->semantics.label = label;
     }
+    inline void addSemanticsCount() {this->semantics.count++; }
+    inline void resetSemanticsCount() {this->semantics.count = 1; }
+
     Semantics& getSemantics() {return semantics; }
 
     // has any color been integrated? (pure white is very unlikely...)
@@ -105,6 +111,7 @@ namespace octomap {
       return (semantics.label.size() > 0);
     }
 
+    void normalizeSemantics();
     void updateColorChildren();
     void updateSemanticsChildren();
 
