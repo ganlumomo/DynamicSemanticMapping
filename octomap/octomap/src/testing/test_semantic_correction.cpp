@@ -60,7 +60,7 @@ int main(int argc, char** argv) {
 
 
   // build a measurement local tree 
-  SemanticOcTree localTree (0.05);
+  SemanticOcTree* localTree = new SemanticOcTree(0.05);
   float labels[5][5]= {{0.3, 0.2, 0, 0, 0}, {0.2, 0.3, 0, 0, 0}, {0, 0, 1, 0, 0}, {0, 0, 0, 1, 0}, {0, 0, 0, 0, 1}};
   int color[5][3] = {{255, 0, 0}, {0, 255, 0}, {0, 0, 255}, {255, 20, 147}, {0, 255, 255}};
  
@@ -87,14 +87,14 @@ int main(int argc, char** argv) {
     // insert into OcTree  
     {
       // insert in global coordinates:
-      localTree.insertPointCloud(*cloud, origin.trans());
+      localTree->insertPointCloud(*cloud, origin.trans());
       
       // fuse extra information
       for (int i=0; i < (int)cloud->size(); ++i) {
         const point3d& query = (*cloud)[i];
         //std::vector<float> extra_info = cloud->getExtraInfo(i);
-        SemanticOcTreeNode* n = localTree.search (query);
-        localTree.averageNodeSemantics(n, label);
+        SemanticOcTreeNode* n = localTree->search (query);
+        localTree->averageNodeSemantics(n, label);
         //print_query_info(query, n);  
       }
     }
@@ -105,9 +105,9 @@ int main(int argc, char** argv) {
   for (int c = 0; c < argc; c++){
     other_label.push_back(labels[argc-1][c]);
   }
-  for (SemanticOcTree::iterator it = localTree.begin(); it != localTree.end(); ++it) {
+  for (SemanticOcTree::iterator it = localTree->begin(); it != localTree->end(); ++it) {
     if ( !it->isSemanticsSet() ) {
-      localTree.averageNodeSemantics((&(*it)), other_label);
+      localTree->averageNodeSemantics((&(*it)), other_label);
     }
   }
   // end building local tree
@@ -116,8 +116,8 @@ int main(int argc, char** argv) {
   
   cout << "Expanded num. leafs: " << tree.getNumLeafNodes() << endl;
   // update the global tree according to local tree
-  for (SemanticOcTree::leaf_iterator it = localTree.begin_leafs(),
-      end = localTree.end_leafs(); it != end; ++it)
+  for (SemanticOcTree::leaf_iterator it = localTree->begin_leafs(),
+      end = localTree->end_leafs(); it != end; ++it)
   {
     point3d queryCoord = it.getCoordinate();
     SemanticOcTreeNode* n = tree.search(queryCoord);
@@ -137,8 +137,8 @@ int main(int argc, char** argv) {
   
   cout << "Expanded num. leafs: " << tree.getNumLeafNodes() << endl;
   // update the global tree according to local tree
-  for (SemanticOcTree::leaf_iterator it = localTree.begin_leafs(),
-      end = localTree.end_leafs(); it != end; ++it)
+  for (SemanticOcTree::leaf_iterator it = localTree->begin_leafs(),
+      end = localTree->end_leafs(); it != end; ++it)
   {
     point3d queryCoord = it.getCoordinate();
     SemanticOcTreeNode* n = tree.search(queryCoord);
@@ -181,8 +181,8 @@ int main(int argc, char** argv) {
   cout << "Expanded num. leafs: " << tree.getNumLeafNodes() << endl;
 
   // test if the update is correct
-  for (SemanticOcTree::leaf_iterator it = localTree.begin_leafs(),
-      end = localTree.end_leafs(); it != end; ++it)
+  for (SemanticOcTree::leaf_iterator it = localTree->begin_leafs(),
+      end = localTree->end_leafs(); it != end; ++it)
   {
     SemanticOcTreeNode* n = tree.search(it.getCoordinate());
     if (n==NULL){
@@ -197,7 +197,7 @@ int main(int argc, char** argv) {
 
  
   // traverse the local tree, set color based on semantics to visualize
-  for (SemanticOcTree::iterator it = localTree.begin(); it != localTree.end(); ++it) {
+  for (SemanticOcTree::iterator it = localTree->begin(); it != localTree->end(); ++it) {
     if ( (&(*it))->isSemanticsSet() ) {
       SemanticOcTreeNode::Semantics s = (&(*it))->getSemantics();
       // Debug
@@ -210,7 +210,8 @@ int main(int argc, char** argv) {
     }
   }//end for
 
-  localTree.write("local_tree.ot");
+  localTree->write("local_tree.ot");
+  delete localTree;
 
 
   // traverse the whole tree, set color based on semantics to visualize
