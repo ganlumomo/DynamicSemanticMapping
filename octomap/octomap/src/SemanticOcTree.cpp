@@ -124,6 +124,14 @@ namespace octomap {
     semantics = getAverageChildSemantics();
   }
 
+  void SemanticOcTreeNode::normalizeSemantics() {
+    float sum = 0;
+    for (int i = 0; i < (int)semantics.label.size(); i++)
+      sum += semantics.label[i];
+    for (int i = 0; i < (int)semantics.label.size(); i++)
+      semantics.label[i] = semantics.label[i]/sum;
+  }
+
 
   // tree implementation  --------------------------------------
   SemanticOcTree::SemanticOcTree(double resolution)
@@ -156,13 +164,17 @@ namespace octomap {
             prev_semantics.label.resize(label.size());
        
         for (int i=0; i<(int)label.size(); i++) {
-          prev_semantics.label[i] += label[i];
-          prev_semantics.label[i] /= 2;
+          prev_semantics.label[i] = (prev_semantics.label[i]*prev_semantics.count + label[i]);
+          prev_semantics.label[i] = prev_semantics.label[i] / (prev_semantics.count + 1);
         }
         n->setSemantics(prev_semantics);
+        n->normalizeSemantics();
+        n->addSemanticsCount();
       }
       else {
         n->setSemantics(label);
+        n->normalizeSemantics();
+        n->resetSemanticsCount();
       }
     }
   }
