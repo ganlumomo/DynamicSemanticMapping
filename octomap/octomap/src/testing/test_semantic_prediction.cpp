@@ -111,7 +111,7 @@ flowSigma << 0.5, 0, 0,
   int color[5][3] = {{255, 0, 0}, {0, 255, 0}};
  
   Pointcloud* new_cloud = new Pointcloud();
-  for ( int argn = 0; argn < argc-1; argn++) {
+  for ( int argn = 0; argn < argc-2; argn++) {
     // read frame pose from text file
     std::string filename = std::string(argv[argn+1]);
     std::ifstream infile(filename.c_str());
@@ -122,30 +122,29 @@ flowSigma << 0.5, 0, 0,
       label.push_back(labels[argn][c]);
     }
 
-    // read point cloud with extrainfo
-    
+    // read point cloud with extrainfo    
     while (infile) {
       new_cloud->readExtraInfo(infile, 3);
     }
-
     // set point cloud origin pose for allignment
     pose6d origin(0, 0, 0, 0, 0, 0);
-    
+    // cout<<(int)new_cloud->size()<<endl;
     // insert into OcTree  
     {
       // insert in global coordinates:
       tree.insertPointCloud(*new_cloud, origin.trans());
-      
       // fuse extra information
       for (int i=0; i < (int)new_cloud->size(); ++i) {
         const point3d& query = (*new_cloud)[i];
         //std::vector<float> extra_info = cloud->getExtraInfo(i);
         SemanticOcTreeNode* n = tree.search(query);
         tree.averageNodeSemantics(n, label);
+        n->setLogOdds(0);
+
         //print_query_info(query, n);  
       }
     }
-  }//end for
+  }   //end for
 
 // read in the scene flow
   
@@ -154,11 +153,13 @@ flowSigma << 0.5, 0, 0,
   
   Pointcloud* sceneflow = new Pointcloud();
   
-  std::string filename = std::string(argv[1]);
+  std::string filename = std::string(argv[argc-1]);
   std::ifstream infile(filename.c_str());
   while (infile) {
     sceneflow->readExtraInfo(infile, 3);
   }
+
+
   // temp_tree.insertPointCloud(*sceneflow, origin.trans());
     
 
@@ -168,6 +169,7 @@ flowSigma << 0.5, 0, 0,
    std::vector<int> point_voxel_map;// mapping vector from points to voxels
    std::vector<point3d> point_vec; //vector of one point in each voxel
    int pos=0;
+   cout<<"(int)sceneflow->size()"<<(int)sceneflow->size()<<endl;
   for (int i=0; i< (int)sceneflow->size(); ++i)
   {
     point3d& query = (*new_cloud)[i];
@@ -202,8 +204,23 @@ flowSigma << 0.5, 0, 0,
   }
 
 
+//test case
+  cout<<"point voxel mapping->"<<endl;
+  for (int i = 0; i < point_voxel_map.size(); ++i)
+  {
+    cout<<point_voxel_map[i]<<" "<<endl;
+  }
+  cout<<"voxel_count->"<<endl;
+  for (int i = 0; i < voxel_count.size(); ++i)
+  {
+    cout<<voxel_count[i]<<" "<<endl;
+  }
+
+
+
+
 //second loop for all the points, propagate using sceneflow
-int nop = 10; // Nuumber of particles
+int nop = 1; // Nuumber of particles
 // sf_cloud is assumed to contain infor about sceneflow too
   for (int i=0; i< (int)new_cloud->size(); ++i)
   {
@@ -212,12 +229,14 @@ int nop = 10; // Nuumber of particles
     SemanticOcTreeNode* n = tree.search (query);
     SemanticOcTreeNode::Semantics s = n->getSemantics();
     double occ = n->getOccupancy();
+    cout<<"occ->"<<occ<<endl;
 //	SIMALRLY GET OCTREENode OCCUPANCY AND STORE IT
 //  Need to get corrsponding weights
     std::vector<float> label = s.label;
 //    std::cout << label << std::endl;
 	// Get weight
     int weight = nop*(voxel_count[point_voxel_map[i]]); 
+    cout<<"weight->"<<weight<<endl;
 //	Need to verify this
 	std:: vector<float> new_so;
 	for(int m = 0; m < (int)label.size();m++){
@@ -233,7 +252,7 @@ int nop = 10; // Nuumber of particles
 
         for (int j=0;j<3;j++){
           new_pos(j) = query(j) + point_flow(j) + error(j);
-          // cout << "new_pos " << new_pos(j) << "  query  " << query(j) << "\n" << endl;
+          cout << "new_pos " << new_pos(j) << "  query  " << query(j) << "\n" << endl;
         }
     
         float ol = 10.0;
@@ -249,7 +268,6 @@ int nop = 10; // Nuumber of particles
 //		We need to get occupancy from Octree. NOT SURE OF COMMAND
         //tree.averageNodeSemantics(newNode, label);
 //        //print_query_info(query, n);  
-  
         }
         else{
 			SemanticOcTreeNode::Semantics curr_so = newNode->getSemantics();
