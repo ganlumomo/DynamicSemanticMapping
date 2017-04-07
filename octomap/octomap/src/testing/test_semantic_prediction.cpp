@@ -35,6 +35,35 @@ void print_query_info(point3d query, SemanticOcTreeNode* node) {
     cout << "occupancy probability at " << query << ":\t is unknown" << endl;
 }
 
+double randn (double mu, double sigma)
+{
+  double U1, U2, W, mult;
+  static double X1, X2;
+  static int call = 0;
+ 
+  if (call == 1)
+    {
+      call = !call;
+      return (mu + sigma * (double) X2);
+    }
+ 
+  do
+    {
+      U1 = -1 + ((double) rand () / RAND_MAX) * 2;
+      U2 = -1 + ((double) rand () / RAND_MAX) * 2;
+      W = pow (U1, 2) + pow (U2, 2);
+    }
+  while (W >= 1 || W == 0);
+ 
+  mult = sqrt ((-2 * log (W)) / W);
+  X1 = U1 * mult;
+  X2 = U2 * mult;
+ 
+  call = !call;
+ 
+  return (mu + sigma * (double) X1);
+}
+
 
 VectorXf sampleFlow(MatrixXf flowSigma){
 
@@ -53,7 +82,7 @@ VectorXf sampleFlow(MatrixXf flowSigma){
   
   for (int i = 0; i < 3;i ++){
     D(i,i) = sqrt(S(i));
-    random(i) = (double) rand() / (RAND_MAX);
+    random(i) = randn(0,1);
   }
   error = V*D*random;
 //  cout << error << "Error" << endl;
