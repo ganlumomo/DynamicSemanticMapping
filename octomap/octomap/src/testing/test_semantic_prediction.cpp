@@ -99,7 +99,7 @@ int main(int argc, char** argv) {
       for (int i=0; i < (int)new_cloud->size(); ++i) {
         const point3d& query = (*new_cloud)[i];
         //std::vector<float> extra_info = cloud->getExtraInfo(i);
-        SemanticOcTreeNode* n = tree.search (query);
+        SemanticOcTreeNode* n = tree.search(query);
         tree.averageNodeSemantics(n, label);
         //print_query_info(query, n);  
       }
@@ -122,13 +122,14 @@ int main(int argc, char** argv) {
     
 
 //find the weights/number of particles
-   std::vector<SemanticOcTreeNode*> node_vec;
-   std::vector<int> voxel_count;
-   std::vector<int> point_voxel_map;
+   std::vector<SemanticOcTreeNode*> node_vec; //vector of voxels containing points
+   std::vector<int> voxel_count;    // voxel counts for each voxel
+   std::vector<int> point_voxel_map;// mapping vector from points to voxels
+   std::vector<point3d> point_vec; //vector of one point in each voxel
    int pos=0;
   for (int i=0; i< (int)sceneflow->size(); ++i)
   {
-    const point3d& query = (*new_cloud)[i];
+    point3d& query = (*new_cloud)[i];
     SemanticOcTreeNode* n = tree.search(query);
     vector<SemanticOcTreeNode*>::iterator it;
 
@@ -139,6 +140,15 @@ int main(int argc, char** argv) {
       node_vec.push_back(n);
       voxel_count.push_back(1);
       point_voxel_map.push_back((voxel_count.size())-1);
+
+
+      point3d temp_node;
+      for (int j=0;j<3;j++){
+          temp_node(j) = query(j);
+          // cout << "new_pos " << new_pos(j) << "  query  " << query(j) << "\n" << endl;
+        }
+
+      point_vec.push_back(temp_node);
        // cout<<"NOT FOUND"<<endl;
     }
     //if points in the old voxel
@@ -152,28 +162,23 @@ int main(int argc, char** argv) {
 
 
 //second loop for all the points, propagate using sceneflow
-int nop = 10; // Nuumber of particles
+int nop = 100; // Nuumber of particles
 // sf_cloud is assumed to contain infor about sceneflow too
+
+MatrixXf flowSigma(3,3);
+  flowSigma << 1,0,0,
+     0,1,0,
+    0,0,1;
+
   for (int i=0; i< (int)new_cloud->size(); ++i)
   {
     const point3d& query = (*new_cloud)[i];
     const point3d& point_flow = (*sceneflow)[i];
     SemanticOcTreeNode* n = tree.search (query);
     SemanticOcTreeNode::Semantics s = n->getSemantics();
-//	SIMALRLY GET OCTREENode OCCUPANCY AND STORE IT
 //  Need to get corrsponding weights
     std::vector<float> label = s.label;
-//    std::cout << label << std::endl;
-	// Get weight
-//	int weight = nop*(point_voxel_map[i]) 
-//	Need to verify this
-	std:: vector<float> new_so;
-	for(int m = 0; m < label.size();m++){
-		new_so.push_back(label[m]/weight); 
-	}
-	new_so.push_back(occ/weight); // OCC IS PROBABILITY OF OCCUPIED
-	new_so.push_back((1-occ)/weight);
-	
+    std::cout << label << std::endl;  
     for (int k = 0; k < nop ; k++){
         
         point3d new_pos;
@@ -187,53 +192,37 @@ int nop = 10; // Nuumber of particles
         float ol = 10.0;
         
         SemanticOcTreeNode* newNode = temp_tree.search(new_pos);
-		// If node doesn't exist we add the semantics combined with occcupancy directly.        
-		
-		if(newNode == NULL){
+        if(newNode == NULL){
         SemanticOcTreeNode* newNode = temp_tree.setNodeValue(new_pos, ol);
-        
-		newNode->setSemantics(new_so); // Need to check this 
-		
-//		We need to get occupancy from Octree. NOT SURE OF COMMAND
+
+        newNode->setSemantics(s);
         //tree.averageNodeSemantics(newNode, label);
 //        //print_query_info(query, n);  
   
         }
         else{
-			SemanticOcTreeNode::Semantics curr_so = newNode -> getSemantic();
-			vector<float> temp;
-			for(int m = 0;m < curr_so.size();m++){
-				temp.push_back(curr_so[m]+new_so[m]);
-			}
-			newNode -> setSemantics(temp);
+
+      
         }
     }
   }
-  
-  
 
 
 //store in temp tree. Delete voxels 
 
 
-
-
-
-//smoothing
-
-for (int i=0; i< (int)new_cloud->size(); ++i){
-	const point3d& query = (*new_cloud)[i];
-    SemanticOcTreeNode* n = temp_tree.search (query);
-    SemanticOcTreeNode::Semantics s = n->getSemantics();
-	SemanticOcTreeNode::Semanti
+// delete the voxel that has been updated in orginal tree
+for (auto i=0; i< point_vec.size(); ++i){
+  tree.deleteNode(point_vec[i](0),point_vec[i](1),point_vec[i](2));
 }
-  
+
+
 
 //normalize
 
 
+//smoothing
 
- 
 
 //update the original tree
 

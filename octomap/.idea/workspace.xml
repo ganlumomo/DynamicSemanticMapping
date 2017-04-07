@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" buildAllGenerated="true">
+    <generated>
+      <config projectName="octomap-distribution" targetName="octovis" />
+      <config projectName="octomap-distribution" targetName="color_tree_histogram" />
+      <config projectName="octomap-distribution" targetName="test_raycasting" />
+      <config projectName="octomap-distribution" targetName="compare_octrees" />
+      <config projectName="octomap-distribution" targetName="normals_example" />
+      <config projectName="octomap-distribution" targetName="octomap-static" />
+      <config projectName="octomap-distribution" targetName="octomap" />
+      <config projectName="octomap-distribution" targetName="test_mapcollection" />
+      <config projectName="octomap-distribution" targetName="exampleEDTOctomap" />
+      <config projectName="octomap-distribution" targetName="simple_example" />
+      <config projectName="octomap-distribution" targetName="unit_tests" />
+      <config projectName="octomap-distribution" targetName="intersection_example" />
+      <config projectName="octomap-distribution" targetName="eval_octree_accuracy" />
+      <config projectName="octomap-distribution" targetName="test_semantic_tree" />
+      <config projectName="octomap-distribution" targetName="octree2pointcloud" />
+      <config projectName="octomap-distribution" targetName="test_color_tree" />
+      <config projectName="octomap-distribution" targetName="uninstall" />
+      <config projectName="octomap-distribution" targetName="test_scans" />
+      <config projectName="octomap-distribution" targetName="edit_octree" />
+      <config projectName="octomap-distribution" targetName="convert_octree" />
+      <config projectName="octomap-distribution" targetName="test_iterators" />
+      <config projectName="octomap-distribution" targetName="exampleEDT3D" />
+      <config projectName="octomap-distribution" targetName="test_io" />
+      <config projectName="octomap-distribution" targetName="dynamicedt3d-static" />
+      <config projectName="octomap-distribution" targetName="bt2vrml" />
+      <config projectName="octomap-distribution" targetName="dynamicedt3d" />
+      <config projectName="octomap-distribution" targetName="octomath" />
+      <config projectName="octomap-distribution" targetName="octovis-static" />
+      <config projectName="octomap-distribution" targetName="graph2tree" />
+      <config projectName="octomap-distribution" targetName="test_ply_scans" />
+      <config projectName="octomap-distribution" targetName="test_semantic_prediction" />
+      <config projectName="octomap-distribution" targetName="log2graph" />
+      <config projectName="octomap-distribution" targetName="test_pruning" />
+      <config projectName="octomap-distribution" targetName="binvox2bt" />
+      <config projectName="octomap-distribution" targetName="octomath-static" />
+      <config projectName="octomap-distribution" targetName="test_semantic_multiscans" />
+      <config projectName="octomap-distribution" targetName="test_changedkeys" />
+      <config projectName="octomap-distribution" targetName="octovis-shared" />
+      <config projectName="octomap-distribution" targetName="test_semantic_scans" />
+    </generated>
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="c8d38a2b-8765-4bda-a5a8-4de0928333b4" name="Default" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FavoritesManager">
+    <favorites_list name="octomap" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/octomap/src/testing/test_semantic_prediction.cpp" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="65" />
+    <option name="y" value="24" />
+    <option name="width" value="1615" />
+    <option name="height" value="1026" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="octomap" />
+              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="octomap" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="octomap" />
+              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="octomap" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="octomap" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="octomap" />
+              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="octomap" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="octomap" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="octomap" />
+              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="octomap" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="octomap" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="testing" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Font" />
+  </component>
+  <component name="RunManager" selected="Application.Build All">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="dynamicedt3d" CONFIG_NAME="Debug">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="Build All" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" CONFIG_NAME="Debug" EXPLICIT_BUILD_TARGET_NAME="all">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="dynamicedt3d" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="dynamicedt3d" CONFIG_NAME="Debug">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="dynamicedt3d-static" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="dynamicedt3d-static" CONFIG_NAME="Debug">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="exampleEDT3D" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="exampleEDT3D" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="octomap-distribution" RUN_TARGET_NAME="exampleEDT3D">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="exampleEDTOctomap" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="exampleEDTOctomap" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="octomap-distribution" RUN_TARGET_NAME="exampleEDTOctomap">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="uninstall" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="uninstall" CONFIG_NAME="Debug">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="binvox2bt" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="binvox2bt" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="octomap-distribution" RUN_TARGET_NAME="binvox2bt">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="bt2vrml" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="bt2vrml" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="octomap-distribution" RUN_TARGET_NAME="bt2vrml">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="compare_octrees" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="compare_octrees" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="octomap-distribution" RUN_TARGET_NAME="compare_octrees">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="convert_octree" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="convert_octree" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="octomap-distribution" RUN_TARGET_NAME="convert_octree">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="edit_octree" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="edit_octree" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="octomap-distribution" RUN_TARGET_NAME="edit_octree">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="eval_octree_accuracy" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="eval_octree_accuracy" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="octomap-distribution" RUN_TARGET_NAME="eval_octree_accuracy">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="graph2tree" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="graph2tree" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="octomap-distribution" RUN_TARGET_NAME="graph2tree">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="intersection_example" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="intersection_example" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="octomap-distribution" RUN_TARGET_NAME="intersection_example">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="log2graph" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="log2graph" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="octomap-distribution" RUN_TARGET_NAME="log2graph">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="normals_example" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="normals_example" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="octomap-distribution" RUN_TARGET_NAME="normals_example">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="octomap" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="octomap" CONFIG_NAME="Debug">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="octomap-static" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="octomap-static" CONFIG_NAME="Debug">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="octree2pointcloud" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="octree2pointcloud" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="octomap-distribution" RUN_TARGET_NAME="octree2pointcloud">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="simple_example" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="simple_example" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="octomap-distribution" RUN_TARGET_NAME="simple_example">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="octomath" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="octomath" CONFIG_NAME="Debug">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="octomath-static" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="octomath-static" CONFIG_NAME="Debug">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="color_tree_histogram" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="color_tree_histogram" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="octomap-distribution" RUN_TARGET_NAME="color_tree_histogram">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="test_changedkeys" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="test_changedkeys" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="octomap-distribution" RUN_TARGET_NAME="test_changedkeys">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="test_color_tree" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="test_color_tree" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="octomap-distribution" RUN_TARGET_NAME="test_color_tree">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="test_io" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="test_io" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="octomap-distribution" RUN_TARGET_NAME="test_io">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="test_iterators" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="test_iterators" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="octomap-distribution" RUN_TARGET_NAME="test_iterators">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="test_mapcollection" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="test_mapcollection" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="octomap-distribution" RUN_TARGET_NAME="test_mapcollection">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="test_ply_scans" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="test_ply_scans" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="octomap-distribution" RUN_TARGET_NAME="test_ply_scans">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="test_pruning" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="test_pruning" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="octomap-distribution" RUN_TARGET_NAME="test_pruning">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="test_raycasting" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="test_raycasting" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="octomap-distribution" RUN_TARGET_NAME="test_raycasting">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="test_scans" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="test_scans" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="octomap-distribution" RUN_TARGET_NAME="test_scans">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="test_semantic_multiscans" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="test_semantic_multiscans" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="octomap-distribution" RUN_TARGET_NAME="test_semantic_multiscans">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="test_semantic_prediction" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="test_semantic_prediction" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="octomap-distribution" RUN_TARGET_NAME="test_semantic_prediction">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="test_semantic_scans" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="test_semantic_scans" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="octomap-distribution" RUN_TARGET_NAME="test_semantic_scans">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="test_semantic_tree" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="test_semantic_tree" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="octomap-distribution" RUN_TARGET_NAME="test_semantic_tree">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="unit_tests" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="unit_tests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="octomap-distribution" RUN_TARGET_NAME="unit_tests">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="octovis" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="octovis" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="octomap-distribution" RUN_TARGET_NAME="octovis">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="octovis-shared" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="octovis-shared" CONFIG_NAME="Debug">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="octovis-static" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="octomap-distribution" TARGET_NAME="octovis-static" CONFIG_NAME="Debug">
+      <envs />
+      <method />
+    </configuration>
+    <list size="40">
+      <item index="0" class="java.lang.String" itemvalue="Application.Build All" />
+      <item index="1" class="java.lang.String" itemvalue="Application.dynamicedt3d" />
+      <item index="2" class="java.lang.String" itemvalue="Application.dynamicedt3d-static" />
+      <item index="3" class="java.lang.String" itemvalue="Application.exampleEDT3D" />
+      <item index="4" class="java.lang.String" itemvalue="Application.exampleEDTOctomap" />
+      <item index="5" class="java.lang.String" itemvalue="Application.uninstall" />
+      <item index="6" class="java.lang.String" itemvalue="Application.binvox2bt" />
+      <item index="7" class="java.lang.String" itemvalue="Application.bt2vrml" />
+      <item index="8" class="java.lang.String" itemvalue="Application.compare_octrees" />
+      <item index="9" class="java.lang.String" itemvalue="Application.convert_octree" />
+      <item index="10" class="java.lang.String" itemvalue="Application.edit_octree" />
+      <item index="11" class="java.lang.String" itemvalue="Application.eval_octree_accuracy" />
+      <item index="12" class="java.lang.String" itemvalue="Application.graph2tree" />
+      <item index="13" class="java.lang.String" itemvalue="Application.intersection_example" />
+      <item index="14" class="java.lang.String" itemvalue="Application.log2graph" />
+      <item index="15" class="java.lang.String" itemvalue="Application.normals_example" />
+      <item index="16" class="java.lang.String" itemvalue="Application.octomap" />
+      <item index="17" class="java.lang.String" itemvalue="Application.octomap-static" />
+      <item index="18" class="java.lang.String" itemvalue="Application.octree2pointcloud" />
+      <item index="19" class="java.lang.String" itemvalue="Application.simple_example" />
+      <item index="20" class="java.lang.String" itemvalue="Application.octomath" />
+      <item index="21" class="java.lang.String" itemvalue="Application.octomath-static" />
+      <item index="22" class="java.lang.String" itemvalue="Application.color_tree_histogram" />
+      <item index="23" class="java.lang.String" itemvalue="Application.test_changedkeys" />
+      <item index="24" class="java.lang.String" itemvalue="Application.test_color_tree" />
+      <item index="25" class="java.lang.String" itemvalue="Application.test_io" />
+      <item index="26" class="java.lang.String" itemvalue="Application.test_iterators" />
+      <item index="27" class="java.lang.String" itemvalue="Application.test_mapcollection" />
+      <item index="28" class="java.lang.String" itemvalue="Application.test_ply_scans" />
+      <item index="29" class="java.lang.String" itemvalue="Application.test_pruning" />
+      <item index="30" class="java.lang.String" itemvalue="Application.test_raycasting" />
+      <item index="31" class="java.lang.String" itemvalue="Application.test_scans" />
+      <item index="32" class="java.lang.String" itemvalue="Application.test_semantic_multiscans" />
+      <item index="33" class="java.lang.String" itemvalue="Application.test_semantic_prediction" />
+      <item index="34" class="java.lang.String" itemvalue="Application.test_semantic_scans" />
+      <item index="35" class="java.lang.String" itemvalue="Application.test_semantic_tree" />
+      <item index="36" class="java.lang.String" itemvalue="Application.unit_tests" />
+      <item index="37" class="java.lang.String" itemvalue="Application.octovis" />
+      <item index="38" class="java.lang.String" itemvalue="Application.octovis-shared" />
+      <item index="39" class="java.lang.String" itemvalue="Application.octovis-static" />
+    </list>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false">
+    <option name="remove_strategy" value="false" />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c8d38a2b-8765-4bda-a5a8-4de0928333b4" name="Default" comment="" />
+      <created>1491522183861</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1491522183861</updated>
+      <workItem from="1491522187626" duration="370000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="370000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="65" y="24" width="1615" height="1026" extended-state="6" />
+    <editor active="false" />
+    <layout>
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2495356" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="processedProjectFiles" value="true" />
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager />
+    <watches-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/ide/ide-scripting.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/octomap/src/testing/test_semantic_prediction.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2537">
+          <caret line="242" column="28" lean-forward="false" selection-start-line="242" selection-start-column="20" selection-end-line="242" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

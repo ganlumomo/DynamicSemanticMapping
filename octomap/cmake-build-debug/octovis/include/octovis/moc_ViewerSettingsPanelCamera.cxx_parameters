@@ -1,0 +1,16 @@
+-I/home/ganyq/Documents/568/project/DynamicSemanticMapping/octomap/octomap/include
+-I/home/ganyq/Documents/568/project/DynamicSemanticMapping/octomap/octovis/include
+-I/usr/include/qt4
+-I/usr/include/qt4/QtOpenGL
+-I/usr/include/qt4/QtGui
+-I/usr/include/qt4/QtXml
+-I/usr/include/qt4/QtCore
+-I/home/ganyq/Documents/568/project/DynamicSemanticMapping/octomap/octovis/src/extern/QGLViewer
+-D$<$<NOT:$<CONFIG:Debug>>:QT_NO_DEBUG>
+-DQT_OPENGL_LIB
+-DQT_GUI_LIB
+-DQT_XML_LIB
+-DQT_CORE_LIB
+-o
+/home/ganyq/Documents/568/project/DynamicSemanticMapping/octomap/cmake-build-debug/octovis/include/octovis/moc_ViewerSettingsPanelCamera.cxx
+/home/ganyq/Documents/568/project/DynamicSemanticMapping/octomap/octovis/include/octovis/ViewerSettingsPanelCamera.h
