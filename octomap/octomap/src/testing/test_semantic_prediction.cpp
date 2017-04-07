@@ -10,16 +10,14 @@
 #include <time.h>       /* time */
 #include <algorithm>    // std::find
 #include <vector>       // std::vector
-#include <random>
+//#include <random>
 
 using namespace std;
 using namespace octomap;
 using namespace Eigen;
 
-MatrixXf flowSigma;
-flowSigma << 1, 0, 0,
-             0, 1, 0,
-             0, 0, 1;
+#define NUMBER_LABELS 3
+#define SMOOTHFACTOR 0.9
 
 void printUsage(char* self){
   std::cerr << "\nUSAGE: " << self << " 5 x point_cloud.txt  (point cloud file, required)\n\n";
@@ -66,6 +64,14 @@ VectorXf sampleFlow(MatrixXf flowSigma){
 
 
 int main(int argc, char** argv) {
+  
+  MatrixXf flowSigma(3, 3);
+flowSigma << 0.5, 0, 0,
+             0, 0.5, 0,
+             0, 0, 0.5;
+
+
+  
   if (argc < 2){
     printUsage(argv[0]);
   }
@@ -105,7 +111,7 @@ int main(int argc, char** argv) {
       for (int i=0; i < (int)new_cloud->size(); ++i) {
         const point3d& query = (*new_cloud)[i];
         //std::vector<float> extra_info = cloud->getExtraInfo(i);
-        SemanticOcTreeNode* n = tree.search (query);
+        SemanticOcTreeNode* n = tree.search(query);
         tree.averageNodeSemantics(n, label);
         //print_query_info(query, n);  
       }
@@ -128,13 +134,14 @@ int main(int argc, char** argv) {
     
 
 //find the weights/number of particles
-   std::vector<SemanticOcTreeNode*> node_vec;
-   std::vector<int> voxel_count;
-   std::vector<int> point_voxel_map;
+   std::vector<SemanticOcTreeNode*> node_vec; //vector of voxels containing points
+   std::vector<int> voxel_count;    // voxel counts for each voxel
+   std::vector<int> point_voxel_map;// mapping vector from points to voxels
+   std::vector<point3d> point_vec; //vector of one point in each voxel
    int pos=0;
   for (int i=0; i< (int)sceneflow->size(); ++i)
   {
-    const point3d& query = (*new_cloud)[i];
+    point3d& query = (*new_cloud)[i];
     SemanticOcTreeNode* n = tree.search(query);
     vector<SemanticOcTreeNode*>::iterator it;
 
@@ -145,6 +152,15 @@ int main(int argc, char** argv) {
       node_vec.push_back(n);
       voxel_count.push_back(1);
       point_voxel_map.push_back((voxel_count.size())-1);
+
+
+      point3d temp_node;
+      for (int j=0;j<3;j++){
+          temp_node(j) = query(j);
+          // cout << "new_pos " << new_pos(j) << "  query  " << query(j) << "\n" << endl;
+        }
+
+      point_vec.push_back(temp_node);
        // cout<<"NOT FOUND"<<endl;
     }
     //if points in the old voxel
@@ -167,17 +183,15 @@ int nop = 10; // Nuumber of particles
     SemanticOcTreeNode* n = tree.search (query);
     SemanticOcTreeNode::Semantics s = n->getSemantics();
     double occ = n->getOccupancy();
-      
 //	SIMALRLY GET OCTREENode OCCUPANCY AND STORE IT
 //  Need to get corrsponding weights
     std::vector<float> label = s.label;
 //    std::cout << label << std::endl;
 	// Get weight
-  int weight = nop*(voxel_count[point_voxel_map[i]]);
-  
+    int weight = nop*(voxel_count[point_voxel_map[i]]); 
 //	Need to verify this
 	std:: vector<float> new_so;
-	for(int m = 0; m < label.size();m++){
+	for(int m = 0; m < (int)label.size();m++){
 		new_so.push_back(label[m]/weight); 
 	}
 	new_so.push_back(occ/weight); // OCC IS PROBABILITY OF OCCUPIED
@@ -209,10 +223,10 @@ int nop = 10; // Nuumber of particles
   
         }
         else{
-			SemanticOcTreeNode::Semantics curr_so = newNode -> getSemantic();
+			SemanticOcTreeNode::Semantics curr_so = newNode->getSemantics();
 			vector<float> temp;
-			for(int m = 0;m < curr_so.size();m++){
-				temp.push_back(curr_so[m]+new_so[m]);
+			for(int m = 0;m < (int)curr_so.label.size();m++){
+				temp.push_back(curr_so.label[m]+new_so[m]);
 			}
 			newNode -> setSemantics(temp);
         }
@@ -220,10 +234,11 @@ int nop = 10; // Nuumber of particles
   }
   
 
-// Delete voxels 
 
-
-
+// delete the voxel that has been updated in orginal tree
+for (int i=0; i< (int)point_vec.size(); ++i){
+  tree.deleteNode(point_vec[i](0),point_vec[i](1),point_vec[i](2));
+}
 
 
 //smoothing
@@ -267,7 +282,7 @@ for (SemanticOcTree::iterator it = temp_tree.begin(); it != temp_tree.end(); ++i
   //occupancy smoothening
   float occ_sf = SMOOTHFACTOR;
 	float occ_sf_o = 1 - occ_sf;
-	float norm_sum = 0;
+  norm_sum = 0;
 	for(int m = 0; m<2;m++){
 		float sum = 0;
 		for(int n = 0;n < 2;n++){
@@ -293,20 +308,16 @@ for (SemanticOcTree::iterator it = temp_tree.begin(); it != temp_tree.end(); ++i
   
 
 
-
-
-
- 
-
 //update the original tree
-for (SemanticOcTree::leaf_iterator it = temp_tree->begin_leafs(),
-    end = temp_tree->end_leafs(); it != end; ++it)
+for (SemanticOcTree::leaf_iterator it = temp_tree.begin_leafs(),
+    end = temp_tree.end_leafs(); it != end; ++it)
 {
-  point3d queryCoord = it.getCoordinate();
-    
+  point3d queryCoord = it.getCoordinate();  
+  SemanticOcTreeNode* n = tree.search(queryCoord);
   // update occupancy
   double pl = it->getOccupancy();
-  SemanticOcTreeNode* n = tree.setLogOdds(queryCoord, octomap::logodds(pl));
+
+  n->setLogOdds(octomap::logodds(pl));
   
   // update semantics
   SemanticOcTreeNode::Semantics sl = it->getSemantics();
