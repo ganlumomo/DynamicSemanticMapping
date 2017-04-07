@@ -16,6 +16,10 @@ using namespace std;
 using namespace octomap;
 using namespace Eigen;
 
+MatrixXf flowSigma << 1, 0, 0,
+                      0, 1, 0,
+                      0, 0, 1;
+
 void printUsage(char* self){
   std::cerr << "\nUSAGE: " << self << " 5 x point_cloud.txt  (point cloud file, required)\n\n";
 
@@ -161,12 +165,15 @@ int nop = 10; // Nuumber of particles
     const point3d& point_flow = (*sceneflow)[i];
     SemanticOcTreeNode* n = tree.search (query);
     SemanticOcTreeNode::Semantics s = n->getSemantics();
+    double occ = n->getOccupancy();
+      
 //	SIMALRLY GET OCTREENode OCCUPANCY AND STORE IT
 //  Need to get corrsponding weights
     std::vector<float> label = s.label;
 //    std::cout << label << std::endl;
 	// Get weight
-//	int weight = nop*(point_voxel_map[i]) 
+  int weight = nop*(voxel_count[point_voxel_map[i]]);
+  
 //	Need to verify this
 	std:: vector<float> new_so;
 	for(int m = 0; m < label.size();m++){
