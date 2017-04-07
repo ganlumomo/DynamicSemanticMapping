@@ -90,7 +90,7 @@ VectorXf sampleFlow(MatrixXf flowSigma){
 }
 
 
-
+//----------------------------------------------------main----------------------------------//
 
 int main(int argc, char** argv) {
   
@@ -148,7 +148,8 @@ flowSigma << 0.5, 0, 0,
     }
   }   //end for
 
-// read in the scene flow
+//-----------------------------------------read in the scene flow----------------------------------//
+
   
   SemanticOcTree temp_tree (0.05);
   pose6d origin(0, 0, 0, 0, 0, 0);
@@ -165,7 +166,8 @@ flowSigma << 0.5, 0, 0,
   // temp_tree.insertPointCloud(*sceneflow, origin.trans());
     
 
-//find the weights/number of particles
+//-----------------------------find the weights/number of particles----------------------------------//
+
    std::vector<SemanticOcTreeNode*> node_vec; //vector of voxels containing points
    std::vector<int> voxel_count;    // voxel counts for each voxel
    std::vector<int> point_voxel_map;// mapping vector from points to voxels
@@ -221,7 +223,8 @@ flowSigma << 0.5, 0, 0,
 
 
 
-//second loop for all the points, propagate using sceneflow
+//-----------------------------second loop for all the points, propagate using sceneflow----------------------------------//
+
 int nop = 10; // Nuumber of particles
 // sf_cloud is assumed to contain infor about sceneflow too
   for (int i=0; i< (int)new_cloud->size(); ++i)
@@ -291,15 +294,15 @@ int nop = 10; // Nuumber of particles
   }
   
 
+//------------------------- delete the voxel that has been updated in orginal tree----------------------------------//
 
-// delete the voxel that has been updated in orginal tree
+
 for (int i=0; i< (int)point_vec.size(); ++i){
   tree.deleteNode(point_vec[i](0),point_vec[i](1),point_vec[i](2));
 }
 
+//------------------------- smoothing and normalize----------------------------------//
 
-//smoothing
-//normalize
 for (SemanticOcTree::iterator it = temp_tree.begin(); it != temp_tree.end(); ++it) {
   
   SemanticOcTreeNode::Semantics s = it->getSemantics();
@@ -379,9 +382,8 @@ for (SemanticOcTree::iterator it = temp_tree.begin(); it != temp_tree.end(); ++i
 
 }
   
-// cout<<"before update all good"<<endl;
 
-//update the original tree
+//------------------------- update the original tree----------------------------------//
 for (SemanticOcTree::leaf_iterator it = temp_tree.begin_leafs(),
     end = temp_tree.end_leafs(); it != end; ++it)
 {
@@ -396,39 +398,38 @@ for (SemanticOcTree::leaf_iterator it = temp_tree.begin_leafs(),
     SemanticOcTreeNode* new_node = tree.updateNode(queryCoord,ol);
     new_node->setSemantics(sl);
 
-    //debug
-    cout<<"coordinates->";
-    for (int i = 0; i < 3; ++i)
-    {
-      cout<<queryCoord(i)<<endl;
-    }  
+  //   //debug
+  //   cout<<"coordinates->";
+  //   for (int i = 0; i < 3; ++i)
+  //   {
+  //     cout<<queryCoord(i)<<endl;
+  //   }  
 
-    SemanticOcTreeNode::Semantics s = new_node->getSemantics();
-    vector<float> lo = s.label;
-    vector<float> occupancy;
-    cout<<"label->";
-    for (int i = 0; i < 3; ++i)
-    {
-      cout<<lo[i]<<endl;
-    }  
+  //   SemanticOcTreeNode::Semantics s = new_node->getSemantics();
+  //   vector<float> lo = s.label;
+  //   vector<float> occupancy;
+  //   cout<<"label->";
+  //   for (int i = 0; i < 3; ++i)
+  //   {
+  //     cout<<lo[i]<<endl;
+  //   }  
 
-    cout<<"occupancy->"<< new_node->getOccupancy()<<endl;
+  //   cout<<"occupancy->"<< new_node->getOccupancy()<<endl;
 
-  }
-  else{
+  // }
+  // else{
 
-    cout<<"old node!!!!"<<endl;
+  //   cout<<"old node!!!!"<<endl;
 
-  n->setLogOdds(octomap::logodds(ol));
-  n->setSemantics(sl);
-  }
+  // n->setLogOdds(octomap::logodds(ol));
+  // n->setSemantics(sl);
+  // }
 
 
   // debug
 }
 
-  
-  // traverse the whole tree, set color based on semantics to visualize
+  //------------------------- traverse the whole tree, set color based on semantics to visualize----------------------------------//
   for (SemanticOcTree::iterator it = tree.begin(); it != tree.end(); ++it) {
     if ( (&(*it))->isSemanticsSet() ) {
       SemanticOcTreeNode::Semantics s = (&(*it))->getSemantics();
