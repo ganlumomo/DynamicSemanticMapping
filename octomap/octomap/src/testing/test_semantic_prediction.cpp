@@ -107,7 +107,7 @@ flowSigma << 0.5, 0, 0,
   srand (time(NULL));
   
   SemanticOcTree tree (0.05);
-  float labels[5][5]= {{1, 0, 0, 0, 0}, {0, 1, 0, 0, 0}};
+  float labels[3][3]= {{1, 0, 0}, {0, 1, 0}};
   int color[5][3] = {{255, 0, 0}, {0, 255, 0}};
  
   Pointcloud* new_cloud = new Pointcloud();
@@ -118,7 +118,7 @@ flowSigma << 0.5, 0, 0,
     
     // prepare label for current class
     std::vector<float> label;
-    for (int c = 0; c < argc-1; c++) {
+    for (int c = 0; c < argc; c++) {
       label.push_back(labels[argn][c]);
     }
 
@@ -140,6 +140,8 @@ flowSigma << 0.5, 0, 0,
         SemanticOcTreeNode* n = tree.search(query);
         tree.averageNodeSemantics(n, label);
         n->setLogOdds(0);
+
+
 
         //print_query_info(query, n);  
       }
@@ -169,7 +171,7 @@ flowSigma << 0.5, 0, 0,
    std::vector<int> point_voxel_map;// mapping vector from points to voxels
    std::vector<point3d> point_vec; //vector of one point in each voxel
    int pos=0;
-   cout<<"(int)sceneflow->size()"<<(int)sceneflow->size()<<endl;
+   // cout<<"(int)sceneflow->size()"<<(int)sceneflow->size()<<endl;
   for (int i=0; i< (int)sceneflow->size(); ++i)
   {
     point3d& query = (*new_cloud)[i];
@@ -204,23 +206,23 @@ flowSigma << 0.5, 0, 0,
   }
 
 
-//test case
-  cout<<"point voxel mapping->"<<endl;
-  for (int i = 0; i < point_voxel_map.size(); ++i)
-  {
-    cout<<point_voxel_map[i]<<" "<<endl;
-  }
-  cout<<"voxel_count->"<<endl;
-  for (int i = 0; i < voxel_count.size(); ++i)
-  {
-    cout<<voxel_count[i]<<" "<<endl;
-  }
+// //test case
+//   cout<<"point voxel mapping->"<<endl;
+//   for (int i = 0; i < point_voxel_map.size(); ++i)
+//   {
+//     cout<<point_voxel_map[i]<<" "<<endl;
+//   }
+//   cout<<"voxel_count->"<<endl;
+//   for (int i = 0; i < voxel_count.size(); ++i)
+//   {
+//     cout<<voxel_count[i]<<" "<<endl;
+//   }
 
 
 
 
 //second loop for all the points, propagate using sceneflow
-int nop = 1; // Nuumber of particles
+int nop = 10; // Nuumber of particles
 // sf_cloud is assumed to contain infor about sceneflow too
   for (int i=0; i< (int)new_cloud->size(); ++i)
   {
@@ -229,29 +231,38 @@ int nop = 1; // Nuumber of particles
     SemanticOcTreeNode* n = tree.search (query);
     SemanticOcTreeNode::Semantics s = n->getSemantics();
     double occ = n->getOccupancy();
-    cout<<"occ->"<<occ<<endl;
+    // cout<<"occ->"<<occ<<endl;
 //	SIMALRLY GET OCTREENode OCCUPANCY AND STORE IT
 //  Need to get corrsponding weights
     std::vector<float> label = s.label;
 //    std::cout << label << std::endl;
 	// Get weight
     int weight = nop*(voxel_count[point_voxel_map[i]]); 
-    cout<<"weight->"<<weight<<endl;
+    // cout<<"weight->"<<weight<<endl;
 //	Need to verify this
 	std:: vector<float> new_so;
 	for(int m = 0; m < (int)label.size();m++){
 		new_so.push_back(label[m]/weight); 
 	}
+
 	new_so.push_back(occ/weight); // OCC IS PROBABILITY OF OCCUPIED
 	new_so.push_back((1-occ)/weight);
 	
+  // //debug
+  // cout<<"new_so->"<<endl;
+  // for (int i = 0; i < new_so.size(); ++i)
+  // {
+  //   cout<<new_so[i]<<endl;
+  // }
+
+
     for (int k = 0; k < nop ; k++){
         
         point3d new_pos;
         VectorXf error = sampleFlow(flowSigma);// Need to get flowSigma
 
         for (int j=0;j<3;j++){
-          new_pos(j) = query(j) + point_flow(j) + error(j);
+          new_pos(j) = query(j) + point_flow(j) + 0*error(j);
           cout << "new_pos " << new_pos(j) << "  query  " << query(j) << "\n" << endl;
         }
     
@@ -262,8 +273,7 @@ int nop = 1; // Nuumber of particles
 		
 		if(newNode == NULL){
         SemanticOcTreeNode* newNode = temp_tree.setNodeValue(new_pos, ol);
-        
-		newNode->setSemantics(new_so); // Need to check this 
+		    newNode->setSemantics(new_so); // Need to check this 
 		
 //		We need to get occupancy from Octree. NOT SURE OF COMMAND
         //tree.averageNodeSemantics(newNode, label);
@@ -304,11 +314,13 @@ for (SemanticOcTree::iterator it = temp_tree.begin(); it != temp_tree.end(); ++i
 	occupancy.push_back(lo[NUMBER_LABELS]);
 	occupancy.push_back(lo[NUMBER_LABELS+1]);
 	
-	//Define SMOOTHFACTOR
+
+
 	//labels smoothening
 	float lab_sf = SMOOTHFACTOR;
 	float lab_sf_o = (1 - lab_sf)/(labels.size() - 1);
 	float norm_sum = 0;
+  float new_sum = 0;
 	for(int m = 0;m<labels.size();m++){
 		float sum = 0;
 		for(int n = 0;n <labels.size();n++){
@@ -321,15 +333,23 @@ for (SemanticOcTree::iterator it = temp_tree.begin(); it != temp_tree.end(); ++i
 		}
 		norm_sum = norm_sum + sum;
 		upd_labels.push_back(sum);
+    // upd_labels.push_back(labels[m]);
+    // new_sum = new_sum + labels[m];
 	}
-	
+	// cout<<"upd_labels->"<<endl;
   for(int m = 0; m < labels.size(); m++)
-    upd_labels[m] /= norm_sum;
+    {
+      upd_labels[m] /= norm_sum;
+      // upd_labels[m] = upd_labels[m]/new_sum;
+      // cout<<upd_labels[m]<<" "<<endl;
+    }
+  
   
   //occupancy smoothening
   float occ_sf = SMOOTHFACTOR;
 	float occ_sf_o = 1 - occ_sf;
   norm_sum = 0;
+  new_sum = 0;
 	for(int m = 0; m<2;m++){
 		float sum = 0;
 		for(int n = 0;n < 2;n++){
@@ -342,10 +362,16 @@ for (SemanticOcTree::iterator it = temp_tree.begin(); it != temp_tree.end(); ++i
 		}
 		norm_sum = norm_sum + sum;
 		upd_occupancy.push_back(sum);
+    // upd_occupancy.push_back(occupancy[m]);
+    // new_sum = new_sum + occupancy[m];
 	}
-
+  // cout<<"occupancy->"<<endl;
 	for(int m = 0; m < 2; m++)
-    upd_occupancy[m] /= norm_sum;
+    {
+      upd_occupancy[m] /= norm_sum;
+      // upd_occupancy[m] = upd_occupancy[m]/new_sum;
+      // cout<<upd_occupancy[m]<<" "<<endl;
+    }
 
   // update the temp tree
   it->setLogOdds(octomap::logodds(upd_occupancy[0]));
@@ -353,7 +379,7 @@ for (SemanticOcTree::iterator it = temp_tree.begin(); it != temp_tree.end(); ++i
 
 }
   
-
+// cout<<"before update all good"<<endl;
 
 //update the original tree
 for (SemanticOcTree::leaf_iterator it = temp_tree.begin_leafs(),
@@ -361,23 +387,46 @@ for (SemanticOcTree::leaf_iterator it = temp_tree.begin_leafs(),
 {
   point3d queryCoord = it.getCoordinate();  
   SemanticOcTreeNode* n = tree.search(queryCoord);
-  // update occupancy
-  double pl = it->getOccupancy();
-
-  n->setLogOdds(octomap::logodds(pl));
-  
-  // update semantics
+  float ol = it->getLogOdds();
   SemanticOcTreeNode::Semantics sl = it->getSemantics();
+  // update occupancy and semantics
+    // cout<<"ol->"<<ol<<endl;
+  
+  if(!n) {
+    SemanticOcTreeNode* new_node = tree.updateNode(queryCoord,ol);
+    new_node->setSemantics(sl);
+
+    //debug
+    cout<<"coordinates->";
+    for (int i = 0; i < 3; ++i)
+    {
+      cout<<queryCoord(i)<<endl;
+    }  
+
+    SemanticOcTreeNode::Semantics s = new_node->getSemantics();
+    vector<float> lo = s.label;
+    vector<float> occupancy;
+    cout<<"label->";
+    for (int i = 0; i < 3; ++i)
+    {
+      cout<<lo[i]<<endl;
+    }  
+
+    cout<<"occupancy->"<< new_node->getOccupancy()<<endl;
+
+  }
+  else{
+
+    cout<<"old node!!!!"<<endl;
+
+  n->setLogOdds(octomap::logodds(ol));
   n->setSemantics(sl);
+  }
+
 
   // debug
-  //cout<< it->getOccupancy() << " " << n->getOccupancy() << " "
-    //<< it->getSemantics().label << n->getSemantics().label << endl;
 }
 
-
-//	
-//FOR SANITY 
   
   // traverse the whole tree, set color based on semantics to visualize
   for (SemanticOcTree::iterator it = tree.begin(); it != tree.end(); ++it) {
