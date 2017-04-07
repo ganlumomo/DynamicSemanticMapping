@@ -16,9 +16,10 @@ using namespace std;
 using namespace octomap;
 using namespace Eigen;
 
-MatrixXf flowSigma << 1, 0, 0,
-                      0, 1, 0,
-                      0, 0, 1;
+MatrixXf flowSigma;
+flowSigma << 1, 0, 0,
+             0, 1, 0,
+             0, 0, 1;
 
 void printUsage(char* self){
   std::cerr << "\nUSAGE: " << self << " 5 x point_cloud.txt  (point cloud file, required)\n\n";
