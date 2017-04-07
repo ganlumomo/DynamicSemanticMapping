@@ -211,24 +211,23 @@ int nop = 10; // Nuumber of particles
     }
   }
   
-  
 
-
-//store in temp tree. Delete voxels 
+// Delete voxels 
 
 
 
 
 
 //smoothing
-
+//normalize
 for (SemanticOcTree::iterator it = temp_tree.begin(); it != temp_tree.end(); ++it) {
-	
-    SemanticOcTreeNode::Semantics s = n->getSemantics();
+  
+  SemanticOcTreeNode::Semantics s = it->getSemantics();
 	vector<float> lo = s.label;
 	vector<float> occupancy;
 	vector<float> labels;
 	vector<float> upd_labels;
+  vector<float> upd_occupancy;
 	for(int m = 0; m < NUMBER_LABELS;m++){// Define NUMBER_LABELS
 		labels.push_back(lo[m]);
 	}
@@ -254,13 +253,38 @@ for (SemanticOcTree::iterator it = temp_tree.begin(); it != temp_tree.end(); ++i
 		upd_labels.push_back(sum);
 	}
 	
-	
-	
-	
+  for(int m = 0; m < labels.size(); m++)
+    upd_labels[m] /= norm_sum;
+  
+  //occupancy smoothening
+  float occ_sf = SMOOTHFACTOR;
+	float occ_sf_o = 1 - occ_sf;
+	float norm_sum = 0;
+	for(int m = 0; m<2;m++){
+		float sum = 0;
+		for(int n = 0;n < 2;n++){
+			if(m == n){
+				sum = sum + (occupancy[n]*occ_sf);
+			}
+			else{
+				sum = sum + (occupancy[n]*occ_sf_o);
+			}
+		}
+		norm_sum = norm_sum + sum;
+		upd_occupancy.push_back(sum);
+	}
+
+	for(int m = 0; m < 2; m++)
+    upd_occupancy[m] /= norm_sum;
+
+  // update the temp tree
+  it->setLogOdds(octomap::logodds(upd_occupancy[0]));
+  it->setSemantics(upd_labels);
+
 }
   
 
-//normalize
+
 
 
 
@@ -305,9 +329,6 @@ for (SemanticOcTree::leaf_iterator it = temp_tree->begin_leafs(),
 
 
   tree.write("semantic_color_scan_Moved.ot");
-
-
-
   
 
   cout << "Test done." << endl;
