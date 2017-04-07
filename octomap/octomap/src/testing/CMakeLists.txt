@@ -44,6 +44,9 @@ TARGET_LINK_LIBRARIES(test_semantic_correction octomap octomath)
 ADD_EXECUTABLE(test_ply_scans test_ply_scans.cpp)
 TARGET_LINK_LIBRARIES(test_ply_scans octomap octomath)
 
+ADD_EXECUTABLE(main main.cpp)
+TARGET_LINK_LIBRARIES(main octomap octomath)
+
 # CTest tests below
 
 ADD_EXECUTABLE(unit_tests unit_tests.cpp)
@@ -69,3 +72,4 @@ ADD_TEST (NAME test_semantic_multiscans COMMAND test_semantic_multiscans)
 ADD_TEST (NAME test_semantic_prediction COMMAND test_semantic_prediction)
 ADD_TEST (NAME test_semantic_correction COMMAND test_semantic_correction)
 ADD_TEST (NAME test_ply_scans COMMAND test_ply_scans)
+ADD_TEST (NAME main COMMAND main)
