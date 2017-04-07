@@ -416,14 +416,14 @@ for (SemanticOcTree::leaf_iterator it = temp_tree.begin_leafs(),
 
   //   cout<<"occupancy->"<< new_node->getOccupancy()<<endl;
 
-  // }
-  // else{
+  }
+  else{
 
   //   cout<<"old node!!!!"<<endl;
 
-  // n->setLogOdds(octomap::logodds(ol));
-  // n->setSemantics(sl);
-  // }
+  n->setLogOdds(octomap::logodds(ol));
+  n->setSemantics(sl);
+  }
 
 
   // debug
