@@ -291,7 +291,7 @@ int nop = 10; // Nuumber of particles
         VectorXf error = sampleFlow(flowSigma);// Need to get flowSigma
 
         for (int j=0;j<3;j++){
-          new_pos(j) = query(j) + flow(j) + 0*error(j);
+          new_pos(j) = query(j) + flow(j) + error(j);
           cout << "new_pos " << new_pos(j) << "  query  " << query(j) << "\n" << endl;
         }
     
