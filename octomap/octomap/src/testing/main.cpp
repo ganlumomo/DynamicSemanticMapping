@@ -125,7 +125,7 @@ int main(int argc, char** argv) {
 //----------------------------------------------------correction----------------------------------//
 
   // +++++++++++++++ START OF BUILDING LOCAL TREE +++++++++++++++++++++++ // 
-  SemanticOcTree* localTree = new SemanticOcTree(MAP_RESOLUTION);
+  
   float label[5][5] = {{1, 0, 0, 0, 0}, {0, 1, 0, 0, 0}, {0, 0, 1, 0, 0}, {0, 0, 0, 1, 0}, {0, 0, 0, 0, 1}};
   int color[5][3] = {{255, 255, 255}, {255, 0, 0}, {0, 255, 0}, {0, 0, 255}, {255, 255, 0}};
   
@@ -138,12 +138,17 @@ int main(int argc, char** argv) {
     //cout<< labels[i] << endl;
   }
   
-  // read frame pose from text file
-  std::string filename = std::string(argv[1]);
-  std::ifstream infile(filename.c_str());
 
+
+for (int argn = 1; argn < argc; argn++) {
   // read point cloud with extrainfo
+  SemanticOcTree* localTree = new SemanticOcTree(MAP_RESOLUTION);
   Pointcloud* cloud = new Pointcloud();
+  
+    // read frame pose from text file
+  std::string filename = std::string(argv[argn]);
+  std::ifstream infile(filename.c_str());
+  
   while (infile) {
     cloud->readExtraInfo(infile, NUM_EXTRAINFO);
   }
@@ -286,8 +291,13 @@ int main(int argc, char** argv) {
     else{
       pos = std::distance(node_vec.begin(), it);
       // cout<<pos<<endl;
-      voxel_count[pos]++;
-      point_voxel_map.push_back(pos);
+//	  if (){
+		voxel_count[pos]++;
+//      }
+//	  else{
+		//Do nothing
+//	  }
+	  point_voxel_map.push_back(pos);
     }
   }
 
@@ -352,7 +362,7 @@ for (int i=0; i< (int)cloud->size(); ++i)
       VectorXf error = sampleFlow(flowSigma);// Need to get flowSigma
 
       for (int j=0;j<3;j++){
-        new_pos(j) = query(j) + point_flow(j) + 0*error(j);
+        new_pos(j) = query(j) + point_flow(j) + error(j);
         //cout << "new_pos " << new_pos(j) << "  query  " << query(j) << "\n" << endl;
       }
   
@@ -409,7 +419,6 @@ for (SemanticOcTree::iterator it = temp_tree->begin(); it != temp_tree->end(); +
 	float lab_sf = SMOOTHFACTOR;
 	float lab_sf_o = (1 - lab_sf)/(labels.size() - 1);
 	float norm_sum = 0;
-  float new_sum = 0;
 	for(int m = 0;m< (int)labels.size();m++){
 		float sum = 0;
 		for(int n = 0;n <(int)labels.size();n++){
@@ -438,7 +447,7 @@ for (SemanticOcTree::iterator it = temp_tree->begin(); it != temp_tree->end(); +
   float occ_sf = SMOOTHFACTOR;
 	float occ_sf_o = 1 - occ_sf;
   norm_sum = 0;
-  new_sum = 0;
+//  new_sum = 0;
 	for(int m = 0; m<2;m++){
 		float sum = 0;
 		for(int n = 0;n < 2;n++){
@@ -551,6 +560,8 @@ delete temp_tree;
 
 
   tree.write("global_tree.ot");
+  delete cloud;
+}
 
   cout << "Test done." << endl;
   exit(0);
