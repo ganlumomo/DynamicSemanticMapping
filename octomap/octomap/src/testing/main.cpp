@@ -123,7 +123,7 @@ int main(int argc, char** argv) {
   SemanticOcTree tree (MAP_RESOLUTION);
 
 
-//----------------------------------------------------correction----------------------------------//
+//--------------------------------------correction----------------------------------//
 
   // +++++++++++++++ START OF BUILDING LOCAL TREE +++++++++++++++++++++++ // 
   SemanticOcTree* localTree = new SemanticOcTree(MAP_RESOLUTION);
@@ -241,7 +241,7 @@ int main(int argc, char** argv) {
   // +++++++++++++++ END OF UPDATING GLOBAL TREE +++++++++++++++++++++++ // 
   delete localTree;
 
-//----------------------------------------------------end correction----------------------------------//
+//----------------------------------end correction----------------------------------//
 
 
 
@@ -264,19 +264,25 @@ int main(int argc, char** argv) {
     point3d& query = (*cloud)[i];
     SemanticOcTreeNode* n = tree.search(query);
     vector<SemanticOcTreeNode*>::iterator it;
-    
+    bool outofscreen= false;
     // check if scene flow is irregular
     std::vector<float> extra_info = cloud->getExtraInfo(i);
     point3d point_flow (extra_info[0], extra_info[1], extra_info[2]);
-    if (point_flow.norm() > FLOW_THRESHOLD)
-      continue;
-      
+    if (point_flow.norm() > FLOW_THRESHOLD){
+      //if norm of flow is too large== points moved out of screen
+      outofscreen = true;
+      // tree.deleteNode(point_flow(0),point_flow(1),point_flow(2));
+    }
+
+
     it=find(node_vec.begin(),node_vec.end(),n);
 
     //if points in the new voxel
     if(it==node_vec.end()){
       node_vec.push_back(n);
-      voxel_count.push_back(1);
+      if (outofscreen){voxel_count.push_back(0);}
+      else{voxel_count.push_back(1);}
+      
       point_voxel_map.push_back((voxel_count.size())-1);
 
 
@@ -293,7 +299,9 @@ int main(int argc, char** argv) {
     else{
       pos = std::distance(node_vec.begin(), it);
       // cout<<pos<<endl;
-      voxel_count[pos]++;
+      if (outofscreen){}
+      else{voxel_count[pos]++;} 
+      
       point_voxel_map.push_back(pos);
     }
   }
@@ -359,7 +367,7 @@ for (int i=0; i< (int)cloud->size(); ++i)
       VectorXf error = sampleFlow(flowSigma);// Need to get flowSigma
 
       for (int j=0;j<3;j++){
-        new_pos(j) = query(j) + point_flow(j) + 0*error(j);
+        new_pos(j) = query(j) + point_flow(j) + error(j);
         //cout << "new_pos " << new_pos(j) << "  query  " << query(j) << "\n" << endl;
       }
   
@@ -393,6 +401,7 @@ for (int i=0; i< (int)cloud->size(); ++i)
 for (int i=0; i< (int)point_vec.size(); ++i){
   tree.deleteNode(point_vec[i](0),point_vec[i](1),point_vec[i](2));
 }
+
 
 //------------------------- smoothing and normalize----------------------------------//
 
