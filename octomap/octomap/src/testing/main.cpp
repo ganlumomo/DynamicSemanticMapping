@@ -17,6 +17,7 @@ using namespace Eigen;
 #define MAP_RESOLUTION 0.05
 #define NUM_EXTRAINFO 4
 #define SMOOTHFACTOR 0.9
+#define FLOW_THRESHOLD 50
 
 void printUsage(char* self){
   std::cerr << "\nUSAGE: " << self << " point_cloud.txt  (point cloud file, required)\n\n";
@@ -252,7 +253,7 @@ int main(int argc, char** argv) {
                0, 0, 0.5;
 //-----------------------------find the weights/number of particles----------------------------------//
 
-   std::vector<SemanticOcTreeNode*> node_vec; //vector of voxels containing points
+   std::vector<SemanticOcTreeNode*> node_vec; // unique vector of voxels containing points
    std::vector<int> voxel_count;    // voxel counts for each voxel
    std::vector<int> point_voxel_map;// mapping vector from points to voxels
    std::vector<point3d> point_vec; //vector of one point in each voxel
@@ -263,7 +264,13 @@ int main(int argc, char** argv) {
     point3d& query = (*cloud)[i];
     SemanticOcTreeNode* n = tree.search(query);
     vector<SemanticOcTreeNode*>::iterator it;
-
+    
+    // check if scene flow is irregular
+    std::vector<float> extra_info = cloud->getExtraInfo(i);
+    point3d point_flow (extra_info[0], extra_info[1], extra_info[2]);
+    if (point_flow.norm() > FLOW_THRESHOLD)
+      continue;
+      
     it=find(node_vec.begin(),node_vec.end(),n);
 
     //if points in the new voxel
@@ -303,7 +310,7 @@ for (int i=0; i< (int)cloud->size(); ++i)
   point3d point_flow (extra_info[0], extra_info[1], extra_info[2]);
 
   // filter out some bad values for scene flow
-  if (point_flow.norm() > 50)
+  if (point_flow.norm() > FLOW_THRESHOLD)
   {
     //OCTOMAP_ERROR("scene flow may be a bad value.\n");
     continue;
