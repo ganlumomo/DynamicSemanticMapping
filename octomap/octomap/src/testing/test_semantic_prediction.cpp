@@ -17,7 +17,10 @@ using namespace octomap;
 using namespace Eigen;
 
 #define NUMBER_LABELS 3
+#define MAP_RESOLUTION 0.05
+#define NUM_EXTRAINFO 4
 #define SMOOTHFACTOR 0.9
+#define FLOW_THRESHOLD 50
 
 void printUsage(char* self){
   std::cerr << "\nUSAGE: " << self << " 5 x point_cloud.txt  (point cloud file, required)\n\n";
@@ -177,15 +180,27 @@ flowSigma << 0.5, 0, 0,
   for (int i=0; i< (int)sceneflow->size(); ++i)
   {
     point3d& query = (*new_cloud)[i];
+    
     SemanticOcTreeNode* n = tree.search(query);
     vector<SemanticOcTreeNode*>::iterator it;
 
     it=find(node_vec.begin(),node_vec.end(),n);
 
-    //if points in the new voxel
+    point3d& flow = (*sceneflow)[i];
+    bool outofscreen= false;
+    point3d point_flow(flow(0),flow(1),flow(2));
+    if (point_flow.norm() > FLOW_THRESHOLD){
+      //if norm of flow is too large== points moved out of screen
+      outofscreen = true;
+      // tree.deleteNode(point_flow(0),point_flow(1),point_flow(2));
+    }
+
+  //if points in the new voxel
     if(it==node_vec.end()){
       node_vec.push_back(n);
-      voxel_count.push_back(1);
+      if (outofscreen){voxel_count.push_back(0);}
+      else{voxel_count.push_back(1);}
+      
       point_voxel_map.push_back((voxel_count.size())-1);
 
 
@@ -202,7 +217,9 @@ flowSigma << 0.5, 0, 0,
     else{
       pos = std::distance(node_vec.begin(), it);
       // cout<<pos<<endl;
-      voxel_count[pos]++;
+      if (outofscreen){}
+      else{voxel_count[pos]++;} 
+      
       point_voxel_map.push_back(pos);
     }
   }
@@ -221,8 +238,7 @@ flowSigma << 0.5, 0, 0,
 //   }
 
 
-
-
+ 
 //-----------------------------second loop for all the points, propagate using sceneflow----------------------------------//
 
 int nop = 10; // Nuumber of particles
@@ -230,10 +246,20 @@ int nop = 10; // Nuumber of particles
   for (int i=0; i< (int)new_cloud->size(); ++i)
   {
     const point3d& query = (*new_cloud)[i];
-    const point3d& point_flow = (*sceneflow)[i];
+    const point3d& flow = (*sceneflow)[i];
     SemanticOcTreeNode* n = tree.search (query);
     SemanticOcTreeNode::Semantics s = n->getSemantics();
     double occ = n->getOccupancy();
+
+    point3d point_flow(flow(0),flow(1),flow(2));
+    if (point_flow.norm() > FLOW_THRESHOLD){
+      //if norm of flow is too large== points moved out of screen
+      continue;
+       //OCTOMAP_ERROR("scene flow may be a bad value.\n");
+      // tree.deleteNode(point_flow(0),point_flow(1),point_flow(2));
+    }
+
+
     // cout<<"occ->"<<occ<<endl;
 //	SIMALRLY GET OCTREENode OCCUPANCY AND STORE IT
 //  Need to get corrsponding weights
@@ -265,7 +291,7 @@ int nop = 10; // Nuumber of particles
         VectorXf error = sampleFlow(flowSigma);// Need to get flowSigma
 
         for (int j=0;j<3;j++){
-          new_pos(j) = query(j) + point_flow(j) + 0*error(j);
+          new_pos(j) = query(j) + flow(j) + 0*error(j);
           cout << "new_pos " << new_pos(j) << "  query  " << query(j) << "\n" << endl;
         }
     
