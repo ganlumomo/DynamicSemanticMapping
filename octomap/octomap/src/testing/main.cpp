@@ -14,9 +14,9 @@ using namespace octomap;
 using namespace Eigen;
 
 #define NUMBER_LABELS 3
-#define MAP_RESOLUTION 0.05
+#define MAP_RESOLUTION 0.2
 #define NUM_EXTRAINFO 4
-#define SMOOTHFACTOR 0.9
+#define SMOOTHFACTOR 1
 
 void printUsage(char* self){
   std::cerr << "\nUSAGE: " << self << " point_cloud.txt  (point cloud file, required)\n\n";
@@ -247,14 +247,30 @@ for (int argn = 1; argn < argc; argn++) {
 
 //----------------------------------------------------end correction----------------------------------//
 
+  // traverse the whole tree, set color based on semantics to visualize
+  for (SemanticOcTree::iterator it = tree.begin(); it != tree.end(); ++it) {
+    if ( it->isSemanticsSet() ) {
+      SemanticOcTreeNode::Semantics s = it->getSemantics();
+      // Debug
+      //print_query_info(point3d(0,0,0), &(*it)); 
+      for (int i = 0; i < NUMBER_LABELS; i++) {
+        if (s.label.size() && s.label[i] > 0.6) {
+          it->setColor(color[i][0], color[i][1], color[i][2]);
+        }
+      }
+    }
+  }//end for
+
+
+  tree.write("after_correction.ot");
 
 
 //----------------------------------------------------prediction----------------------------------//
   SemanticOcTree* temp_tree = new SemanticOcTree(MAP_RESOLUTION);
   MatrixXf flowSigma(3, 3);
-  flowSigma << 0.5, 0, 0,
-               0, 0.5, 0,
-               0, 0, 0.5;
+  flowSigma << 0.05, 0, 0,
+               0, 0.05, 0,
+               0, 0, 0.05;
 //-----------------------------find the weights/number of particles----------------------------------//
 
    std::vector<SemanticOcTreeNode*> node_vec; //vector of voxels containing points
@@ -362,7 +378,7 @@ for (int i=0; i< (int)cloud->size(); ++i)
       VectorXf error = sampleFlow(flowSigma);// Need to get flowSigma
 
       for (int j=0;j<3;j++){
-        new_pos(j) = query(j) + point_flow(j) + error(j);
+        new_pos(j) = query(j) + point_flow(j) + 0.01*error(j);
         //cout << "new_pos " << new_pos(j) << "  query  " << query(j) << "\n" << endl;
       }
   
@@ -523,6 +539,7 @@ for (SemanticOcTree::leaf_iterator it = temp_tree->begin_leafs(),
   // debug
 }
 delete temp_tree;
+
 //----------------------------------------------------end prediction----------------------------------//
 
 
