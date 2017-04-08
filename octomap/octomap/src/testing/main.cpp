@@ -13,11 +13,12 @@ using namespace std;
 using namespace octomap;
 using namespace Eigen;
 
+#define MAP_RESOLUTION 0.1
 #define NUMBER_LABELS 3
-#define MAP_RESOLUTION 0.05
-#define NUM_EXTRAINFO 4
-#define SMOOTHFACTOR 0.9
-#define FLOW_THRESHOLD 50
+#define NUMBER_EXTRAINFO 4
+#define NUMBER_PARTICLES 10
+#define SMOOTH_FACTOR 0.9
+#define FLOW_THRESHOLD 20
 
 void printUsage(char* self){
   std::cerr << "\nUSAGE: " << self << " point_cloud.txt  (point cloud file, required)\n\n";
@@ -34,51 +35,44 @@ void print_query_info(point3d query, SemanticOcTreeNode* node) {
     cout << "occupancy probability at " << query << ":\t is unknown" << endl;
 }
 
-double randn (double mu, double sigma)
-{
+double randn (double mu, double sigma) {
   double U1, U2, W, mult;
   static double X1, X2;
   static int call = 0;
+
+  if (call == 1) {
+    call = !call;
+    return (mu + sigma * (double) X2);
+  }
  
-  if (call == 1)
-    {
-      call = !call;
-      return (mu + sigma * (double) X2);
-    }
- 
-  do
-    {
-      U1 = -1 + ((double) rand () / RAND_MAX) * 2;
-      U2 = -1 + ((double) rand () / RAND_MAX) * 2;
-      W = pow (U1, 2) + pow (U2, 2);
-    }
+  do {
+    U1 = -1 + ((double) rand () / RAND_MAX) * 2;
+    U2 = -1 + ((double) rand () / RAND_MAX) * 2;
+    W = pow (U1, 2) + pow (U2, 2);
+  }
   while (W >= 1 || W == 0);
  
   mult = sqrt ((-2 * log (W)) / W);
   X1 = U1 * mult;
   X2 = U2 * mult;
- 
   call = !call;
- 
   return (mu + sigma * (double) X1);
 }
 
-VectorXf sampleFlow(MatrixXf flowSigma){
-
+VectorXf sampleFlow(MatrixXf flowSigma) {
   MatrixXf V;
   MatrixXf S;
   MatrixXf D(3,3);
   D << 0,0,0,
-     0,0,0,
-    0,0,0;
+       0,0,0,
+       0,0,0;
   VectorXf random(3);
   VectorXf error;
   JacobiSVD<MatrixXf> svd(flowSigma, ComputeThinU | ComputeThinV);
   V = svd.matrixV(); // need to define
   S = svd.singularValues();
   
-  
-  for (int i = 0; i < 3;i ++){
+  for (int i = 0; i < 3; i++){
     D(i,i) = sqrt(S(i));
     random(i) = randn(0,1);
   }
@@ -146,7 +140,7 @@ int main(int argc, char** argv) {
   // read point cloud with extrainfo
   Pointcloud* cloud = new Pointcloud();
   while (infile) {
-    cloud->readExtraInfo(infile, NUM_EXTRAINFO);
+    cloud->readExtraInfo(infile, NUMBER_EXTRAINFO);
   }
   cout << "Finish reading the point cloud." << endl;
 
@@ -164,7 +158,7 @@ int main(int argc, char** argv) {
       const point3d& query = (*cloud)[i];
       std::vector<float> extra_info = cloud->getExtraInfo(i);
       SemanticOcTreeNode* n = localTree->search (query);
-      localTree->averageNodeSemantics(n, labels[ int(extra_info[NUM_EXTRAINFO-1]) ]);
+      localTree->averageNodeSemantics(n, labels[ int(extra_info[NUMBER_EXTRAINFO-1]) ]);
       //print_query_info(query, n);  
     }
   }
@@ -253,7 +247,7 @@ int main(int argc, char** argv) {
                0, 0, 0.5;
 //-----------------------------find the weights/number of particles----------------------------------//
 
-   std::vector<SemanticOcTreeNode*> node_vec; // unique vector of voxels containing points
+  /* std::vector<SemanticOcTreeNode*> node_vec; // unique vector of voxels containing points
    std::vector<int> voxel_count;    // voxel counts for each voxel
    std::vector<int> point_voxel_map;// mapping vector from points to voxels
    std::vector<point3d> point_vec; //vector of one point in each voxel
@@ -296,12 +290,20 @@ int main(int argc, char** argv) {
       voxel_count[pos]++;
       point_voxel_map.push_back(pos);
     }
+  }*/
+
+  cout<< "I am herer" <<endl;
+  for (int i=0; i<(int)cloud->size(); ++i)
+  {
+    const point3d& query = (*cloud)[i];
+    SemanticOcTreeNode* n = tree.search(query);
+    n->addSemanticsCount();
   }
 
 
 //-----------------------------second loop for all the points, propagate using sceneflow----------------------------------//
 
-int nop = 10; // Nuumber of particles
+//int nop = 10; // Nuumber of particles
 // sf_cloud is assumed to contain infor about sceneflow too
 for (int i=0; i< (int)cloud->size(); ++i)
 {
@@ -312,7 +314,7 @@ for (int i=0; i< (int)cloud->size(); ++i)
   // filter out some bad values for scene flow
   if (point_flow.norm() > FLOW_THRESHOLD)
   {
-    //OCTOMAP_ERROR("scene flow may be a bad value.\n");
+    OCTOMAP_ERROR("scene flow may be a bad value.\n");
     continue;
   }
 
@@ -324,25 +326,21 @@ for (int i=0; i< (int)cloud->size(); ++i)
   }
   
   SemanticOcTreeNode::Semantics s = n->getSemantics();
-  
   double occ = n->getOccupancy();
-  // cout<<"occ->"<<occ<<endl;
-  //	SIMALRLY GET OCTREENode OCCUPANCY AND STORE IT
-  //  Need to get corrsponding weights
+  int weight = NUMBER_PARTICLES*(s.count);
   
-  std::vector<float> label = s.label;
+  //std::vector<float> label = s.label;
   //    std::cout << label << std::endl;
   // Get weight
   
-  int weight = nop*(voxel_count[point_voxel_map[i]]); 
+    //nop*(voxel_count[point_voxel_map[i]]); 
   
   // cout<<"weight->"<<weight<<endl;
   //	Need to verify this
   std:: vector<float> new_so;
-  for(int m = 0; m < (int)label.size();m++){
-    new_so.push_back(label[m]/weight); 
+  for(int m = 0; m < (int)s.label.size(); m++){
+    new_so.push_back(s.label[m]/weight); 
   }
-
   new_so.push_back(occ/weight); // OCC IS PROBABILITY OF OCCUPIED
   new_so.push_back((1-occ)/weight);
 
@@ -354,35 +352,30 @@ for (int i=0; i< (int)cloud->size(); ++i)
   // }
 
 
-  for (int k = 0; k < nop ; k++){
+  for (int k = 0; k < NUMBER_PARTICLES; k++){
       point3d new_pos;
       VectorXf error = sampleFlow(flowSigma);// Need to get flowSigma
-
-      for (int j=0;j<3;j++){
-        new_pos(j) = query(j) + point_flow(j) + 0*error(j);
+      
+      for (int j=0; j<3; j++) {
+        new_pos(j) = query(j) + point_flow(j) + error(j);
         //cout << "new_pos " << new_pos(j) << "  query  " << query(j) << "\n" << endl;
       }
   
-      float ol = 10.0;
       
       SemanticOcTreeNode* newNode = temp_tree->search(new_pos);
   // If node doesn't exist we add the semantics combined with occcupancy directly.        
   
-    if(newNode == NULL){
-        SemanticOcTreeNode* newNode = temp_tree->setNodeValue(new_pos, ol);
-        newNode->setSemantics(new_so); // Need to check this 
-    
-  //		We need to get occupancy from Octree. NOT SURE OF COMMAND
-        //tree.averageNodeSemantics(newNode, label);
-  //        //print_query_info(query, n);  
-      }
-    else{
+    if(!newNode) {
+        SemanticOcTreeNode* newNode = temp_tree->setNodeValue(new_pos, 10);
+        newNode->setSemantics(new_so); // Need to check this
+    } else {
       SemanticOcTreeNode::Semantics curr_so = newNode->getSemantics();
-      vector<float> temp;
+      //vector<float> temp;
       for(int m = 0;m < (int)curr_so.label.size();m++){
-        temp.push_back(curr_so.label[m]+new_so[m]);
+        //temp.push_back(curr_so.label[m]+new_so[m]);
+        curr_so.label[m] += new_so[m];
       }
-      newNode -> setSemantics(temp);
+      newNode -> setSemantics(curr_so);
     }
   }
 }
@@ -390,9 +383,28 @@ for (int i=0; i< (int)cloud->size(); ++i)
 
 //------------------------- delete the voxel that has been updated in orginal tree----------------------------------//
 
-for (int i=0; i< (int)point_vec.size(); ++i){
-  tree.deleteNode(point_vec[i](0),point_vec[i](1),point_vec[i](2));
-}
+//for (int i=0; i< (int)point_vec.size(); ++i){
+  //tree.deleteNode(point_vec[i](0),point_vec[i](1),point_vec[i](2));
+//}
+//
+//
+  for (int i=0; i< (int)cloud->size(); ++i)
+  {
+   const point3d& query = (*cloud)[i];
+
+
+  SemanticOcTreeNode* n = tree.search (query);
+  if(!n)
+  {
+    OCTOMAP_ERROR("already deleted..");
+    continue;
+  }
+  else
+   tree.deleteNode(query); 
+  
+  
+     
+  }
 
 //------------------------- smoothing and normalize----------------------------------//
 
@@ -413,7 +425,7 @@ for (SemanticOcTree::iterator it = temp_tree->begin(); it != temp_tree->end(); +
 
 
 	//labels smoothening
-	float lab_sf = SMOOTHFACTOR;
+	float lab_sf = SMOOTH_FACTOR;
 	float lab_sf_o = (1 - lab_sf)/(labels.size() - 1);
 	float norm_sum = 0;
   float new_sum = 0;
@@ -442,7 +454,7 @@ for (SemanticOcTree::iterator it = temp_tree->begin(); it != temp_tree->end(); +
   
   
   //occupancy smoothening
-  float occ_sf = SMOOTHFACTOR;
+  float occ_sf = SMOOTH_FACTOR;
 	float occ_sf_o = 1 - occ_sf;
   norm_sum = 0;
   new_sum = 0;
