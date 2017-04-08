@@ -66,7 +66,7 @@ namespace octomap {
  
     class Semantics {
     public:
-    Semantics() : label(), count(0) {}
+    Semantics() : label(), count(1) {}
     Semantics(std::vector<float> _label)
       : label(_label), count(1) {}
       // TODO-ganlu: inline bool operator== (const Semantics &other) const{}
