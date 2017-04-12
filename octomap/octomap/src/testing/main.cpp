@@ -14,11 +14,11 @@ using namespace octomap;
 using namespace Eigen;
 
 #define MAP_RESOLUTION 0.05
-#define NUM_LABELS 3
+#define NUM_LABELS 9
 #define NUM_EXTRAINFO 4
 #define NUM_PARTICLES 10
 #define SMOOTH_FACTOR 1.0
-#define FLOW_THRESHOLD 50
+#define FLOW_THRESHOLD 20
 
 void printUsage(char* self){
   std::cerr << "\nUSAGE: " << self << " point_cloud.txt  (point cloud file, required)\n\n";
@@ -113,8 +113,9 @@ int main(int argc, char** argv) {
   // build the global tree
   SemanticOcTree tree (MAP_RESOLUTION);
 
-  float label[5][5] = {{1, 0, 0, 0, 0}, {0, 1, 0, 0, 0}, {0, 0, 1, 0, 0}, {0, 0, 0, 1, 0}, {0, 0, 0, 0, 1}};
-  int color[5][3] = {{255, 255, 255}, {255, 0, 0}, {0, 255, 0}, {0, 0, 255}, {255, 255, 0}};
+  float label[9][9] = {{1, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 1, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 1}};
+  int color[9][3] = {{255, 255, 255}, {255, 0, 0}, {0, 255, 0}, {0, 0, 255}, {0, 255, 255}, {255, 0, 255}, {255, 255, 0}, {125, 0, 0}, {125, 125, 0}};
   
   // prepare label for each class
   std::vector<std::vector<float> > labels;
@@ -146,7 +147,7 @@ int main(int argc, char** argv) {
 
 
 
-    //----------------------------------------------------prediction----------------------------------//
+    //----------------------------------------------------correction----------------------------------//
     
     //---------------------start to build the local tree------------------//
     
@@ -164,7 +165,7 @@ int main(int argc, char** argv) {
       localTree->averageNodeSemantics(n, labels[ int(extra_info[NUM_EXTRAINFO-1]) ]);
       //print_query_info(query, n);  
     }
-
+  
     // add semantics to all other nodes
     for (SemanticOcTree::iterator it = localTree->begin(); it != localTree->end(); ++it) {
       if ( !it->isSemanticsSet() ) {
@@ -262,9 +263,9 @@ int main(int argc, char** argv) {
     
     SemanticOcTree* temp_tree = new SemanticOcTree(MAP_RESOLUTION);
     MatrixXf flowSigma(3, 3);
-    flowSigma << 0.01, 0, 0,
-                 0, 0.01, 0,
-                 0, 0, 0.01;
+    flowSigma << 0.005, 0, 0,
+                 0, 0.005, 0,
+                 0, 0, 0.005;
 
     // find voxel weights according to points
     for (int i=0; i<(int)cloud->size(); i++) {
@@ -285,7 +286,7 @@ int main(int argc, char** argv) {
 
       // filter out some bad values for scene flow
       if (point_flow.norm() > FLOW_THRESHOLD) {
-        //OCTOMAP_ERROR("scene flow may be a bad value.\n");
+        OCTOMAP_ERROR("scene flow may be a bad value.\n");
         continue;
       }
 
