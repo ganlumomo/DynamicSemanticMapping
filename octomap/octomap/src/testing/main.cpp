@@ -14,7 +14,7 @@ using namespace octomap;
 using namespace Eigen;
 
 #define MAP_RESOLUTION 0.05
-#define NUM_LABELS 9
+#define NUM_LABELS 13
 #define NUM_EXTRAINFO 4
 #define NUM_PARTICLES 10
 #define SMOOTH_FACTOR 1.0
@@ -113,9 +113,36 @@ int main(int argc, char** argv) {
   // build the global tree
   SemanticOcTree tree (MAP_RESOLUTION);
 
-  float label[9][9] = {{1, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 1, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 1}};
-  int color[9][3] = {{255, 255, 255}, {255, 0, 0}, {0, 255, 0}, {0, 0, 255}, {0, 255, 255}, {255, 0, 255}, {255, 255, 0}, {125, 0, 0}, {125, 125, 0}};
+ /* float label[14][14] = {{1, 0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0, 0}, 
+    {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+    {0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+    {0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+    {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+    {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+    {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0}, 
+    {0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0}, 
+    {0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}, 
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0}, 
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0}, 
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}};*/
+  
+  float label[13][13] = {{1, 0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0}, 
+    {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+    {0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+    {0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+    {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+    {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0}, 
+    {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0}, 
+    {0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}, 
+    {0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0}, 
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0}, 
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0}, 
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}};
+  
+  int color[13][3] = {{255, 255, 255}, {255, 0, 0}, {0, 255, 0}, {0, 0, 255}, {0, 255, 255}, {255, 0, 255}, {255, 255, 0}, {125, 0, 0}, {125, 125, 0},{0,125,0},{0,0,125},{125,250,0},{125,0,250}};
   
   // prepare label for each class
   std::vector<std::vector<float> > labels;
@@ -137,8 +164,13 @@ int main(int argc, char** argv) {
     
     // read point cloud with extrainfo
     Pointcloud* cloud = new Pointcloud();
-    // set point cloud origin pose for allignment
     pose6d origin(0, 0, 0, 0, 0, 0);
+    // set point cloud origin pose for allignment
+    if(argn > 1)
+    {
+      pose6d origin2(2, -2, 1.181, 0, 0, 0);
+      origin = origin2;
+    }
    
     while (infile) {
       cloud->readExtraInfo(infile, NUM_EXTRAINFO);
@@ -154,6 +186,7 @@ int main(int argc, char** argv) {
     SemanticOcTree* localTree = new SemanticOcTree(MAP_RESOLUTION);
     
     // insert in global coordinates
+    cout << origin.trans() << endl;
     localTree->insertPointCloud(*cloud, origin.trans());
     cout << "Finish occupancy mapping." << endl;
 
@@ -263,9 +296,9 @@ int main(int argc, char** argv) {
     
     SemanticOcTree* temp_tree = new SemanticOcTree(MAP_RESOLUTION);
     MatrixXf flowSigma(3, 3);
-    flowSigma << 0.005, 0, 0,
-                 0, 0.005, 0,
-                 0, 0, 0.005;
+    flowSigma << 0.001, 0, 0,
+                 0, 0.001, 0,
+                 0, 0, 0.001;
 
     // find voxel weights according to points
     for (int i=0; i<(int)cloud->size(); i++) {
